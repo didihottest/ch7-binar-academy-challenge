@@ -1,0 +1,28 @@
+{
+  "name": "ch-6-muhammad-didi-majdi-saleh",
+  "version": "1.0.0",
+  "description": "Challenge Chapter 6 Binar Academy Wave 7",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Didi",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didihottest.com/ch6-mongodb-express-node-ejs-stack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/didihottest.com/ch6-mongodb-express-node-ejs-stack/issues"
+  },
+  "homepage": "https://github.com/didihottest.com/ch6-mongodb-express-node-ejs-stack#readme"
+}

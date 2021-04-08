@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
+    <!-- Custom styles for this template -->
+    <link href="public/css/login-style.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+
+    <main class="form-signin">
+        <form action="/login" method="POST">
+            <img class="mb-4" src="public/assets/logo1.png" alt="game-logo" width="72">
+            <h1 class="h3 mb-3 fw-normal signin-title">SIGN IN</h1>
+            <input name="playerName" type="text" class="form-control name" placeholder="Username" required autofocus>
+            <input name="password" type="password" id="inputPassword" class="form-control password"
+                placeholder="Password" required>
+            <button class="w-100 btn btn-lg btn-login" name="submit" type="submit">LOGIN</button>
+        </form>
+        <!-- show error message if user has entered wrong login information -->
+        <div class="login-status mt-3">
+            <% if(status == 'fail') { %>
+            <%- include('partial/message') %>
+            <% } %>
+            <% var status; %>
+        </div>
+    </main>
+
+
+
+
+</body>

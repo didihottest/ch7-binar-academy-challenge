@@ -1,0 +1,36 @@
+html {
+    height: 100%;
+  }
+  
+  body {
+    display: flex;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #9C835F;
+    height: 100%;
+  }
+  
+  .signin-title {
+    font-weight: bold;
+    color: white;
+    padding: 10px 50px;
+    background-color: #9A6F59;
+    border-radius: 10px;
+  }
+  
+  .form-signin {
+    width: 100%;
+    max-width: 430px;
+    padding: 15px;
+    margin: auto;
+  }
+
+  .btn-index{
+    background: linear-gradient(194.68deg, #FFB548 11.27%, #F3AF34 90.4%);
+    color: white;
+    font-weight: bold;
+  }
+
+
+ 
