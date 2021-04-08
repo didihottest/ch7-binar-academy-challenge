@@ -1,13 +1,12 @@
 // use express module
-const cors = require('cors');
 const express = require('express');
 const app = express();
 const routers = express.Router();
-const User_Game = require('./../db/user_game.js')
-const { User_Game_BiodataSchema, User_Game_Biodata } = require('./../db/user_game_biodata')
-const { User_Game_HistorySchema, User_Game_History } = require('./../db/user_game_history')
+const { User_Game, User_Game_Biodata, User_Game_History } = require('./../db/user_game.js')
 // to pass form data from body
 const multer = require('multer')
+// use mongoose ODM 
+const mongoose = require('mongoose');
 // use connection module to connect to database from route
 require('./../db/connection')
 // Get request raw json from postman / api
@@ -15,35 +14,60 @@ app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
 
-routers.post("/newuser", multer().none(), async (req, res) => {
-  try {
-    const { username, password, firstName, lastName, age, win, lose } = req.body;
-    const user_biodata = {
-      firstName: firstName,
-      lastName: lastName,
-      age: age
-    }
-    const newUser_biodata = new User_Game_Biodata(user_biodata)
-    await newUser_biodata.save()
-    const user_history = {
-      win: win,
-      lose: lose
-    }
-    const newUser_history = new User_Game_History(user_history)
-    await newUser_history.save()
 
-    const user = {
+// get user_games api
+routers.get('/api/userlists', async (req, res) => {
+  const user_games = await User_Game.find()
+  if (user_games.length > 0) {
+    res.send({
+      status: 'success to get data',
+      data: user_games
+    })
+  } else {
+    res.send({
+      status: 'No data'
+    })
+  }
+})
+
+routers.post("/api/adduser", multer().none(), async (req, res) => {
+  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  try {
+    const newUser = new User_Game({
+      _id: new mongoose.Types.ObjectId(),
       username: username,
       password: password,
-      userGameBiodata: newUser_biodata,
-      userGameHistory: newUser_history
-    }
-    const newUser = new User_Game(user)
-    const doc = await newUser.save()
+    })
+    newUser.save((err) => {
+      if (err) {
+        return handleError(err)
+      } else {
+        const user_biodata = new User_Game_Biodata({
+          user_id: newUser._id,
+          firstName: firstName,
+          lastName: lastName,
+          age: age
+        })
+        user_biodata.save((err) => {
+          if (err) {
+            return handleError(err)
+          } else {
+            const user_history = new User_Game_History({
+              user_id: newUser._id,
+              win: win,
+              lose: lose
+            })
+            user_history.save((err)=>{
+              if (err) return handleError(err)
+            })
+          }
+        })
+      }
+    })
     if (newUser) {
       res.send({
         status: "Successfuly added",
-        data: doc
+        data: newUser
       })
     } else {
       res.send({
@@ -51,7 +75,7 @@ routers.post("/newuser", multer().none(), async (req, res) => {
       })
     }
   } catch (error) {
-      res.send(error.message)
+    res.send(error.message)
   }
 
 })
