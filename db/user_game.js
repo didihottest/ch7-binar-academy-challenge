@@ -1,7 +1,11 @@
 // use mongoose odm library
 const mongoose = require('mongoose');
+// import User_Game_Biodata and User_Game_History schema
+const User_Game_Biodata = require('./user_game_biodata')
+const User_Game_History = require('./user_game_history')
+
 // create user_game schema
-const user_gameSchema = new mongoose.Schema({
+const User_GameSchema = new mongoose.Schema({
   username:{
     type: String,
     required: [true, 'username must be filled']
@@ -9,8 +13,10 @@ const user_gameSchema = new mongoose.Schema({
   password:{
     type: String,
     required: [true, 'password must be filled']
-  }
+  },
+  userGameBiodata: user_game_biodata,
+  userGameHistory: user_game_history
 });
 // create user_game model using user_gameSchema
-const user_game = mongoose.model('user_game', user_gameSchema);
+const User_Game = mongoose.model('User_Game', User_GameSchema);
 module.exports = user_game;
