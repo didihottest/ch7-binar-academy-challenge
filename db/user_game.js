@@ -37,7 +37,3 @@ const User_Game_HistorySchema = new mongoose.Schema({
 const User_Game_History = mongoose.model("User_Game_History", User_Game_HistorySchema)
 
 module.exports = {User_Game, User_Game_Biodata, User_Game_History}
-
-// module.exports = User_Game;
-// module.exports = {User_Game, User_Game_Biodata, User_Game_History}
-// module.exports = {User_Game_HistorySchema}
