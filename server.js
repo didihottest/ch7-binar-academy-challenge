@@ -14,10 +14,12 @@ const dotenv = require('dotenv');
 // use morgan module
 const morgan = require('morgan');
 // use router as a middleware
-const routers = require('./routers')
+const routers = require('./routes/router')
 app.use(routers)
 // use express static middleware
 app.use(express.static(__dirname));
+// Get request raw json from postman / api
+app.use(express.json());
 // use express bodyparser to pass data from body
 app.use(express.urlencoded({ extended: true }));
 // use cors moudule on express

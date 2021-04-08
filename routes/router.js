@@ -1,20 +1,15 @@
 // use express module
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const routers = express.Router();
 // use connection module to connect to database from route
-require('./connection')
+require('./../db/connection')
+// Get request raw json from postman / api
+app.use(express.json());
 
-
-// index route
-app.get("/", function (req, res) {
-  res.render("index");
-});
-// login route
-app.get("/login", function (req, res) {
-  res.render("login");
-})
-
+// Get request form form-urlencoded form postman / api
+app.use(express.urlencoded({extended:true}));
 
 
 module.exports = routers
