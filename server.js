@@ -3,8 +3,10 @@ const express = require('express');
 const app = express();
 // use request module
 const request = require("request")
+// Cross-Origin Resource Sharing module 
+const cors = require('cors');
 // import json file that contain login information to server
-const logins = require("./json/playerName.json")
+const logins = require("./json/staticLogin.json")
 // router for default route
 const router = express.Router()
 // use dot env module
@@ -12,31 +14,24 @@ const dotenv = require('dotenv');
 // use morgan module
 const morgan = require('morgan');
 // use router as a middleware
-app.use(router);
+const routers = require('./routers')
+app.use(routers)
 // use express static middleware
 app.use(express.static(__dirname));
 // use express bodyparser to pass data from body
-app.use(express.urlencoded({
-    extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
+// use cors moudule on express
+app.use(cors())
 // Load environment configuration
 dotenv.config({ path: './config/config.env' })
 // Dev logging middleware
-if(process.env.NODE_ENV === 'development'){
+if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 // set view engine to ejs
 app.set("view engine", "ejs");
 // set ejs directory to public folder
 app.set('views', './public/views');
-// index route
-app.get("/", function (req, res) {
-    res.render("index");
-});
-// login route
-app.get("/login", function (req, res) {
-    res.render("login");
-})
 
 
 // end point if server has an internal error
