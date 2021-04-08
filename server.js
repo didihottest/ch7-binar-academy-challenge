@@ -7,8 +7,6 @@ const request = require("request")
 const cors = require('cors');
 // import json file that contain login information to server
 const logins = require("./json/staticLogin.json")
-// router for default route
-const router = express.Router()
 // use dot env module
 const dotenv = require('dotenv');
 // use morgan module
