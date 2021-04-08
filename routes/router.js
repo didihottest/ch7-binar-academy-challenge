@@ -17,53 +17,59 @@ app.use(express.urlencoded({ extended: true }));
 
 // get user_games api
 routers.get('/api/userlists', async (req, res) => {
-  const user_games = await User_Game.find()
-  if (user_games.length > 0) {
-    res.send({
-      status: 'success to get data',
-      data: user_games
+  User_Game.find()
+    .populate('userGameBiodata userGameHistory')
+    .exec((err, user_game) => {
+      if (err) return handleError(err);
+      res.send(user_game)
     })
-  } else {
-    res.send({
-      status: 'No data'
-    })
-  }
 })
 
 routers.post("/api/adduser", multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const user_biodataID = new mongoose.Types.ObjectId()
+  const user_historyID = new mongoose.Types.ObjectId()
   try {
     const newUser = new User_Game({
       _id: new mongoose.Types.ObjectId(),
       username: username,
       password: password,
+      userGameBiodata: user_biodataID,
+      userGameHistory: user_historyID
     })
+
+    const user_biodata = new User_Game_Biodata({
+      _id: user_biodataID,
+      user_id: newUser._id,
+      firstName: firstName,
+      lastName: lastName,
+      age: age
+    })
+
+
+    const user_history = new User_Game_History({
+      _id: user_historyID,
+      user_id: newUser._id,
+      win: win,
+      lose: lose
+    })
+
     newUser.save((err) => {
       if (err) {
         return handleError(err)
-      } else {
-        const user_biodata = new User_Game_Biodata({
-          user_id: newUser._id,
-          firstName: firstName,
-          lastName: lastName,
-          age: age
-        })
-        user_biodata.save((err) => {
-          if (err) {
-            return handleError(err)
-          } else {
-            const user_history = new User_Game_History({
-              user_id: newUser._id,
-              win: win,
-              lose: lose
-            })
-            user_history.save((err)=>{
-              if (err) return handleError(err)
-            })
-          }
-        })
       }
     })
+
+    user_biodata.save((err) => {
+      if (err) {
+        return handleError(err)
+      }
+    })
+
+    user_history.save((err) => {
+      if (err) return handleError(err)
+    })
+
     if (newUser) {
       res.send({
         status: "Successfuly added",
