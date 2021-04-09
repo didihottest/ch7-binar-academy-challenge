@@ -19,18 +19,18 @@ app.use(express.urlencoded({ extended: true }));
 routers.get('/api/userlists', async (req, res) => {
   try {
     await User_Game.find()
-    .populate('userGameBiodata userGameHistory')
-    .exec((err, user_game) => {
-      if (err) return handleError(err);
-      res.send(user_game)
-    })
+      .populate('userGameBiodata userGameHistory')
+      .exec((err, user_game) => {
+        if (err) return handleError(err);
+        res.send(user_game)
+      })
   } catch (error) {
     res.send({
       status: "Failed to get data",
       message: error.message
     })
   }
-  
+
 })
 
 routers.post("/api/adduser", multer().none(), async (req, res) => {
@@ -91,7 +91,48 @@ routers.post("/api/adduser", multer().none(), async (req, res) => {
   } catch (error) {
     res.send({
       status: 'Fail to add new data',
-      message : error.message
+      message: error.message
+    })
+  }
+
+})
+
+routers.put('/api/edituser/:id', multer().none() ,async (req, res) => {
+  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const id = req.params.id
+  try {
+    await User_Game.findOneAndUpdate({ _id: id }, {
+      username: username,
+      password: password
+    }, async (req, res) => {
+      
+      await User_Game_Biodata.updateOne(
+        { _id: res.userGameBiodata },
+        {
+          firstName: firstName,
+          lastName: lastName,
+          age: age
+        },
+        { runValidators: true }
+      )
+
+      await User_Game_History.updateOne(
+        { _id: res.userGameHistory },
+        {
+          win: win,
+          lose: lose
+        },
+        { runValidators: true }
+      )
+    })
+
+    res.send({
+      status: "Successfully Updated"
+    })
+  } catch (error) {
+    res.send({
+      status: "failed to update",
+      message: error.message
     })
   }
 
@@ -106,7 +147,8 @@ routers.delete('/api/deleteuser/:id', async (req, res) => {
         await User_Game_History.deleteOne({ _id: res.userGameHistory })
         res.send({
           status: "Deleted",
-          message: "Document Successfully Deleted"
+          message: "Document Successfully Deleted",
+          id: id
         })
       } catch (error) {
         res.send({
