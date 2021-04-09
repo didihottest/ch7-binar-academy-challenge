@@ -17,12 +17,20 @@ app.use(express.urlencoded({ extended: true }));
 
 // get user_games api
 routers.get('/api/userlists', async (req, res) => {
-  User_Game.find()
+  try {
+    await User_Game.find()
     .populate('userGameBiodata userGameHistory')
     .exec((err, user_game) => {
       if (err) return handleError(err);
       res.send(user_game)
     })
+  } catch (error) {
+    res.send({
+      status: "Failed to get data",
+      message: error.message
+    })
+  }
+  
 })
 
 routers.post("/api/adduser", multer().none(), async (req, res) => {
@@ -77,13 +85,42 @@ routers.post("/api/adduser", multer().none(), async (req, res) => {
       })
     } else {
       res.send({
-        status: 'Fail to add new data',
+        status: 'Fail to add new data'
       })
     }
   } catch (error) {
-    res.send(error.message)
+    res.send({
+      status: 'Fail to add new data',
+      message : error.message
+    })
   }
 
+})
+
+routers.delete('/api/deleteuser/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    User_Game.findOneAndDelete({ _id: id }, async (err, res) => {
+      try {
+        await User_Game_Biodata.deleteOne({ _id: res.userGameBiodata })
+        await User_Game_History.deleteOne({ _id: res.userGameHistory })
+        res.send({
+          status: "Deleted",
+          message: "Document Successfully Deleted"
+        })
+      } catch (error) {
+        res.send({
+          status: "failed to delete",
+          message: error.message
+        })
+      }
+    })
+  } catch (error) {
+    res.send({
+      status: "failed to delete",
+      message: error.message
+    })
+  }
 })
 
 module.exports = routers
