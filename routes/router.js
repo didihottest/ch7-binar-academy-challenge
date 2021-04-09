@@ -7,6 +7,8 @@ const { User_Game, User_Game_Biodata, User_Game_History } = require('./../db/use
 const multer = require('multer')
 // use mongoose ODM 
 const mongoose = require('mongoose');
+// use request module to pull data from API
+const request = require('request');
 // use connection module to connect to database from route
 require('./../db/connection')
 // Get request raw json from postman / api
@@ -15,8 +17,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+routers.get('/dashboard', (req, res) => {
+  let status = req.query.notif;
+
+  let option = {
+    url: "http://localhost:3000/api/user",
+    method: "GET",
+  }
+  request(option, (error, response, body) => {
+    if (error) {
+      res.send("Error data list is not available")
+    } else {
+      let currentData = JSON.parse(body);
+      res.render("crud", {
+        data: currentData,
+        notif: status
+      });
+    }
+  })
+})
+
 // get user_games api
-routers.get('/api/userlists', async (req, res) => {
+routers.get('/api/user', async (req, res) => {
   try {
     await User_Game.find()
       .populate('userGameBiodata userGameHistory')
@@ -33,7 +55,7 @@ routers.get('/api/userlists', async (req, res) => {
 
 })
 
-routers.post("/api/adduser", multer().none(), async (req, res) => {
+routers.post("/api/user", multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const user_biodataID = new mongoose.Types.ObjectId()
   const user_historyID = new mongoose.Types.ObjectId()
@@ -97,7 +119,7 @@ routers.post("/api/adduser", multer().none(), async (req, res) => {
 
 })
 
-routers.put('/api/edituser/:id', multer().none() ,async (req, res) => {
+routers.put('/api/user/:id', multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const id = req.params.id
   try {
@@ -105,7 +127,7 @@ routers.put('/api/edituser/:id', multer().none() ,async (req, res) => {
       username: username,
       password: password
     }, async (req, res) => {
-      
+
       await User_Game_Biodata.updateOne(
         { _id: res.userGameBiodata },
         {
@@ -138,24 +160,21 @@ routers.put('/api/edituser/:id', multer().none() ,async (req, res) => {
 
 })
 
-routers.delete('/api/deleteuser/:id', async (req, res) => {
+routers.delete('/api/user/:id', async (req, res) => {
+  const id = req.params.id;
   try {
-    const id = req.params.id;
-    User_Game.findOneAndDelete({ _id: id }, async (err, res) => {
+    await User_Game.findOneAndDelete({ _id: id }, async (err, res) => {
       try {
         await User_Game_Biodata.deleteOne({ _id: res.userGameBiodata })
         await User_Game_History.deleteOne({ _id: res.userGameHistory })
-        res.send({
-          status: "Deleted",
-          message: "Document Successfully Deleted",
-          id: id
-        })
       } catch (error) {
-        res.send({
-          status: "failed to delete",
-          message: error.message
-        })
+        console.error(error.message)
       }
+    })
+    res.send({
+      status: "Deleted",
+      message: "Document Successfully Deleted",
+      id: id
     })
   } catch (error) {
     res.send({
@@ -163,6 +182,7 @@ routers.delete('/api/deleteuser/:id', async (req, res) => {
       message: error.message
     })
   }
+  res.redirect("/dashboard")
 })
 
 module.exports = routers
