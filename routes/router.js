@@ -16,12 +16,12 @@ app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
 
-
+// dashboard end route
 routers.get('/dashboard', (req, res) => {
-  let status = req.query.notif;
+  let status = req.query.status;
 
   let option = {
-    url: "http://localhost:3000/api/user",
+    url: "http://localhost:3000/api/users",
     method: "GET",
   }
   request(option, (error, response, body) => {
@@ -31,14 +31,42 @@ routers.get('/dashboard', (req, res) => {
       let currentData = JSON.parse(body);
       res.render("crud", {
         data: currentData,
-        notif: status
+        status: status
       });
     }
   })
 })
 
-// get user_games api
-routers.get('/api/user', async (req, res) => {
+// edit page end route
+routers.get('/edit', (req, res) => {
+  let id = req.query.id;
+  let option = {
+    url: "http://localhost:3000/api/user",
+    method: "GET",
+    qs: {
+      id:id
+    }
+  }
+  request(option, (error, response, body) => {
+    if (error) {
+      res.send("Error data list is not available")
+    } else {
+      let currentData = JSON.parse(body);
+      res.render("edit", {
+        data: currentData
+      });
+    }
+  })
+})
+
+// add user_game endpoint 
+routers.get('/add', (req, res)=>{
+  res.render("add")
+})
+
+
+// get all user_games data api
+routers.get('/api/users', async (req, res) => {
   try {
     await User_Game.find()
       .populate('userGameBiodata userGameHistory')
@@ -52,8 +80,26 @@ routers.get('/api/user', async (req, res) => {
       message: error.message
     })
   }
-
 })
+
+// get one user_games data api
+routers.get('/api/user', async (req, res) => {
+  const id = req.query.id;
+  try {
+    User_Game.findOne({_id: id})
+      .populate('userGameBiodata userGameHistory')
+      .exec((err, user_game) => {
+        if (err) return handleError(err);
+        res.send(user_game)
+      })
+  } catch (error) {
+    res.send({
+      status: "Failed to get data",
+      message: error.message
+    })
+  }
+})
+
 
 routers.post("/api/user", multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
@@ -86,25 +132,24 @@ routers.post("/api/user", multer().none(), async (req, res) => {
 
     newUser.save((err) => {
       if (err) {
-        return handleError(err)
+        console.error(err)
       }
     })
 
     user_biodata.save((err) => {
       if (err) {
-        return handleError(err)
+        console.error(err)
       }
     })
 
     user_history.save((err) => {
-      if (err) return handleError(err)
+      if (err) {
+        console.error(err)
+      }
     })
 
     if (newUser) {
-      res.send({
-        status: "Successfuly added",
-        data: newUser
-      })
+      res.redirect("/dashboard?status=successadd")
     } else {
       res.send({
         status: 'Fail to add new data'
@@ -115,11 +160,10 @@ routers.post("/api/user", multer().none(), async (req, res) => {
       status: 'Fail to add new data',
       message: error.message
     })
-  }
-
+  } 
 })
 
-routers.put('/api/user/:id', multer().none(), async (req, res) => {
+routers.post('/api/useredit/:id', multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const id = req.params.id
   try {
@@ -147,20 +191,17 @@ routers.put('/api/user/:id', multer().none(), async (req, res) => {
         { runValidators: true }
       )
     })
-
-    res.send({
-      status: "Successfully Updated"
-    })
+    res.redirect("/dashboard?status=successedit")
   } catch (error) {
     res.send({
       status: "failed to update",
       message: error.message
     })
   }
-
+  
 })
 
-routers.delete('/api/user/:id', async (req, res) => {
+routers.post('/api/userdelete/:id', async (req, res) => {
   const id = req.params.id;
   try {
     await User_Game.findOneAndDelete({ _id: id }, async (err, res) => {
@@ -171,18 +212,13 @@ routers.delete('/api/user/:id', async (req, res) => {
         console.error(error.message)
       }
     })
-    res.send({
-      status: "Deleted",
-      message: "Document Successfully Deleted",
-      id: id
-    })
+    res.redirect("/dashboard?status=successdelete")
   } catch (error) {
     res.send({
       status: "failed to delete",
       message: error.message
     })
   }
-  res.redirect("/dashboard")
 })
 
 module.exports = routers

@@ -6,6 +6,7 @@
   </head>
 
   <body>
+    <script src="public/script/script.js"></script> 
     <%- include("partial/navbar") %>
     <div class="container-fluid">
       <h1 class="text-center">Game User List</h1>
@@ -13,14 +14,16 @@
         <a href="/add">
           <button class="btn btn-success mb-5 mt-3">Add New Entry</button>
         </a>
-        <% if(notif == 'suksesupdate') { %> <%-include('partial/message') %> <%
-        } else if (notif =="suksesedit") { %> <%-
-        include('partial/message-edit') %> <% } else if (notif ==
-        "suksesdelete") { %> <%- include('partial/message-delete') %> <% } %>
 
-        <table
-          class="table table-bordered table-hover table-dark table-hover table-sm"
-        >
+        <% if (status == "successadd") { %> 
+        <%- include('partial/message-success') %> 
+        <% } else if (status =="successedit") { %>         
+        <%- include('partial/message-edit') %> 
+        <% } else if (status == "successdelete") { %> 
+        <%- include('partial/message-delete') %> 
+        <% } %>
+
+        <table class="table table-bordered table-hover table-dark table-hover table-sm">
           <thead>
             <tr>
               <th>User Name</th>
@@ -45,12 +48,12 @@
               <td><%= data.userGameHistory.win %></td>
               <td><%= data.userGameHistory.lose %></td>
               <td>
-                <a href="/api/user/<%= data._id %>">
+                <a href="/edit?id=<%= data._id %>">
                   <button class="btn btn-warning">Edit</button>
                 </a>
               </td>
               <td>
-                <form action="/api/user/<%= data._id %>" method="DELETE">
+                <form action="/api/userdelete/<%= data._id %>" method="POST">
                   <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
               </td>
@@ -60,7 +63,6 @@
         </table>
       </div>
     </div>
-
     <script
       type="text/javascript"
       src="public/script/bootstrap.min.js"

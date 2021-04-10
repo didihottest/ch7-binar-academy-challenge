@@ -1,6 +1,8 @@
 // use express module
 const express = require('express');
 const app = express();
+// use router as a middleware
+const routers = require('./routes/router')
 // use request module
 const request = require("request")
 // Cross-Origin Resource Sharing module 
@@ -11,9 +13,6 @@ const logins = require("./json/staticLogin.json")
 const dotenv = require('dotenv');
 // use morgan module
 const morgan = require('morgan');
-// use router as a middleware
-const routers = require('./routes/router')
-app.use(routers)
 // use express static middleware
 app.use(express.static(__dirname));
 // Get request raw json from postman / api
@@ -32,7 +31,7 @@ if (process.env.NODE_ENV === 'development') {
 app.set("view engine", "ejs");
 // set ejs directory to public folder
 app.set('views', './public/views');
-
+app.use(routers)
 
 // end point if server has an internal error
 app.use((error, req, res, next) => {
