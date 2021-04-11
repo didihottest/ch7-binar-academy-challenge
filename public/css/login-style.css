@@ -12,10 +12,13 @@ body {
 }
 
 .signin-title {
-  font-weight: bold;
+  font-weight: bolder;
   color: black;
   padding: 10px 50px;
-  border-radius: 10px;
+}
+
+.logo {
+  color: rgb(235, 170, 85);
 }
 
 .form-signin {
@@ -23,6 +26,8 @@ body {
   max-width: 450px;
   padding: 15px;
   margin: auto;
+  box-shadow: 0px 0px 20px 0px grey;
+  background-color: white;
 }
 .form-signin .checkbox {
   font-weight: 400;
