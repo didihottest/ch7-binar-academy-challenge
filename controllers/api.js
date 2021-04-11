@@ -1,27 +1,30 @@
+// use express module
 const express = require('express');
 const app = express();
-const { User_Game, User_Game_Biodata, User_Game_History } = require('../db/user_game.js')
-// to pass form data from body
-const cors = require('cors');
-// use connection module to connect to database from route
-require('../db/connection')
-// to pass form data from body
-const multer = require('multer')
 // use mongoose ODM 
 const mongoose = require('mongoose');
-// use cors moudule on express
-app.use(cors())
+// use connection module to connect to database from route
+require('./../db/connection')
+// import model from db file
+const { User_Game, User_Game_Biodata, User_Game_History } = require('./../db/user_game.js')
+// to pass form data from body
+const multer = require('multer')
 // Get request raw json from postman / api
 app.use(express.json());
 // Get request form form-urlencoded form postman / api
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
-exports.getUser = (async (req, res, next) => {
+exports.getUsers = (async (req, res, next) => {
   try {
     await User_Game.find()
       .populate('userGameBiodata userGameHistory')
       .exec((err, user_game) => {
-        if (err) return handleError(err);
+        if (err) if (err) {
+          res.send({
+            status: "failed",
+            message: "Wrong ID"
+          })
+        };
         res.send(user_game)
       })
   } catch (error) {
@@ -30,15 +33,37 @@ exports.getUser = (async (req, res, next) => {
       message: error.message
     })
   }
-
 })
 
-exports.addUser = (multer().none(), async (req, res, next) => {
-  console.log(req.body)
+// get one user_games data api
+exports.getUser = (async (req, res, next) => {
+  const id = req.query.id;
   try {
-    const { username, password, firstName, lastName, age, win, lose } = req.body;
-    const user_biodataID = new mongoose.Types.ObjectId()
-    const user_historyID = new mongoose.Types.ObjectId()
+    User_Game.findOne({ _id: id })
+      .populate('userGameBiodata userGameHistory')
+      .exec((err, user_game) => {
+        if (err) {
+          res.send({
+            status: "failed",
+            message: "Wrong ID"
+          })
+        };
+        res.send(user_game)
+      })
+  } catch (error) {
+    res.send({
+      status: "Failed to get data",
+      message: error.message
+    })
+  }
+})
+
+// add new user api end point
+exports.newUser = (multer().none(), async (req, res, next) => {
+  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const user_biodataID = new mongoose.Types.ObjectId()
+  const user_historyID = new mongoose.Types.ObjectId()
+  try {
     const newUser = new User_Game({
       _id: new mongoose.Types.ObjectId(),
       username: username,
@@ -63,87 +88,84 @@ exports.addUser = (multer().none(), async (req, res, next) => {
       lose: lose
     })
 
-    newUser.save((err) => {
-      if (err) {
-        return handleError(err)
-      }
-    })
-
     user_biodata.save((err) => {
       if (err) {
-        return handleError(err)
+        console.error(err)
       }
     })
 
     user_history.save((err) => {
-      if (err) return handleError(err)
+      if (err) {
+        console.error(err)
+      }
     })
 
-    if (newUser) {
-      res.send({
-        status: "Successfuly added",
-        data: newUser
-      })
-    } else {
-      res.send({
-        status: 'Fail to add new data'
-      })
-    }
+    newUser.save((err) => {
+      // if username is not unique tell dashboard that there is duplicated data
+      if (err) {
+        res.redirect("/dashboard?status=duplicate")
+      } else {
+        // verificator if new user has value or not
+        if (newUser) {
+          res.redirect("/dashboard?status=successadd")
+        } else {
+          res.redirect("/add?status=failed")
+        }
+      }
+    })
+
+    console.log("user value" + newUser)
+
   } catch (error) {
     res.send({
       status: 'Fail to add new data',
       message: error.message
     })
   }
-
 })
 
-exports.updateUser = (multer().none(), async (req, res, next) => {
-
+// edit user_game entry api endpoint
+exports.editUser = (multer().none(), async (req, res, next) => {
+  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const id = req.params.id
   try {
-    const { username, password, firstName, lastName, age, win, lose } = req.body;
-    const id = req.params.id
-    console.log(id)
     await User_Game.findOneAndUpdate({ _id: id }, {
       username: username,
       password: password
-    }, async (req, res) => {
+    },
+      { runValidators: true, context: 'query' }, // enable validator to make username only has unique value
+      (err) => { if (err) console.log(err.message) }, // display error message to console
+      async (req, res) => { // if there is no error forward to next update process
+        await User_Game_Biodata.updateOne( // update User_Game_Biodata value
+          { _id: res.userGameBiodata },
+          {
+            firstName: firstName,
+            lastName: lastName,
+            age: age
+          },
+          { runValidators: true }
+        )
 
-      await User_Game_Biodata.updateOne(
-        { _id: res.userGameBiodata },
-        {
-          firstName: firstName,
-          lastName: lastName,
-          age: age
-        },
-        { runValidators: true }
-      )
-
-      await User_Game_History.updateOne(
-        { _id: res.userGameHistory },
-        {
-          win: win,
-          lose: lose
-        },
-        { runValidators: true }
-      )
-    })
-
-    res.send({
-      status: "Successfully Updated"
-    })
+        await User_Game_History.updateOne( // update User_Game_History value
+          { _id: res.userGameHistory },
+          {
+            win: win,
+            lose: lose
+          },
+          { runValidators: true }
+        )
+      })
+    res.redirect("/dashboard?status=successedit") // redirect with success query
   } catch (error) {
-    res.send({
-      status: "failed to update",
-      message: error.message
-    })
+    res.redirect("/dashboard?status=duplicate") // redirect with data dupilcated query
   }
 
 })
 
-exports.deleteUser = (async (req, res, next) => {
+// delete user_game entry API endpoint
+exports.deleteUser = (async (req, res) => {
+  const id = req.params.id;
   try {
-    const id = req.params.id;
     await User_Game.findOneAndDelete({ _id: id }, async (err, res) => {
       try {
         await User_Game_Biodata.deleteOne({ _id: res.userGameBiodata })
@@ -152,16 +174,11 @@ exports.deleteUser = (async (req, res, next) => {
         console.error(error.message)
       }
     })
-    res.send({
-      status: "Deleted",
-      message: "Document Successfully Deleted",
-      id: id
-    })
+    res.redirect("/dashboard?status=successdelete")
   } catch (error) {
     res.send({
       status: "failed to delete",
       message: error.message
     })
   }
-  res.redirect("/dashboard")
 })
