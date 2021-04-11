@@ -22,6 +22,7 @@ app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
 
+// dashboard route from controller
 router.get('/', home);
 router.get('/login', login);
 router.get('/dashboard', dashboard);

@@ -13,7 +13,7 @@ const multer = require('multer')
 app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
-
+// display all users entry from database
 exports.getUsers = (async (req, res, next) => {
   try {
     await User_Game.find()
