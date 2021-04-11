@@ -1,7 +1,3 @@
-// use express module
-const express = require('express');
-const app = express();
-const router = express.Router();
 // use request module to pull data from API
 const request = require('request');
 
