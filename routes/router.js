@@ -15,7 +15,7 @@ const {
   getUser, 
   newUser, 
   editUser, 
-  deleteUser} = require('../controllers/api')
+  deleteUser } = require('../controllers/api')
 
 // Get request raw json from postman / api
 app.use(express.json());
@@ -27,7 +27,6 @@ router.get('/login', login);
 router.get('/dashboard', dashboard);
 router.get('/edit', edit);
 router.get('/add', add);
-
 
 // get all user_games data api
 router.get('/api/users', getUsers);
