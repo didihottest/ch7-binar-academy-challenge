@@ -16,6 +16,26 @@ app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
 
+//home end route 
+routers.get('/', (req, res) => {
+  res.render('home')
+})
+
+//login page endpoint 
+routers.get('/login', (req, res) => {
+  const status = req.query.status;
+  if (status != undefined) {
+    res.render('login', {
+      status: status
+    })
+  } else {
+    res.render('login', {
+      status: null
+    })
+  }
+
+})
+
 // dashboard end route
 routers.get('/dashboard', (req, res) => {
   let status = req.query.status;

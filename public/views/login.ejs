@@ -4,28 +4,27 @@
 <head>
     <%- include("partial/head-meta.ejs") %>
     <title>Login</title>
+    <!-- Custom styles for this template -->
+    <link href="public/css/login-style.css" rel="stylesheet">
 </head>
 
 <body class="text-center">
 
     <main class="form-signin">
+        <i class="fas fa-key fa-8x"></i>
         <form action="/login" method="POST">
-            <h1 class="h3 mb-3 fw-normal signin-title">SIGN IN</h1>
+            <h1 class="h3 mb-3 fw-normal signin-title">LOGIN TO DASHBOARD</h1>
             <input name="playerName" type="text" class="form-control name" placeholder="Username" required autofocus>
             <input name="password" type="password" id="inputPassword" class="form-control password"
                 placeholder="Password" required>
-            <button class="w-100 btn btn-lg btn-login" name="submit" type="submit">LOGIN</button>
+            <button class="w-100 btn btn-lg btn-dark" name="submit" type="submit">LOGIN</button>
         </form>
         <!-- show error message if user has entered wrong login information -->
         <div class="login-status mt-3">
-            <% if(status == 'fail') { %>
+            <% if(status == 'fail') { %>  
             <%- include('partial/message') %>
             <% } %>
-            <% var status; %>
         </div>
     </main>
-
-
-
 
 </body>

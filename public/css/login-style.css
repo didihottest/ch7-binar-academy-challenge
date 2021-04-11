@@ -7,29 +7,20 @@ body {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #9C835F;
+  background-color: #E8ECEF;
   height: 100%;
-}
-
-.bd-placeholder-img {
-    font-size: 1.125rem;
-    text-anchor: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
 }
 
 .signin-title {
   font-weight: bold;
-  color: white;
+  color: black;
   padding: 10px 50px;
-  background-color: #9A6F59;
   border-radius: 10px;
 }
 
 .form-signin {
   width: 100%;
-  max-width: 330px;
+  max-width: 450px;
   padding: 15px;
   margin: auto;
 }
@@ -62,11 +53,7 @@ body {
   border-bottom-right-radius: 10px;
 }
 
-.btn-login{
-  background: linear-gradient(194.68deg, #FFB548 11.27%, #F3AF34 90.4%);
-  color: white;
-  font-weight: bold;
-}
+
 @media (min-width: 768px) {
     .bd-placeholder-img-lg {
         font-size: 3.5rem;
