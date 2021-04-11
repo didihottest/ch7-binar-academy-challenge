@@ -93,7 +93,12 @@ routers.get('/api/users', async (req, res) => {
     await User_Game.find()
       .populate('userGameBiodata userGameHistory')
       .exec((err, user_game) => {
-        if (err) return handleError(err);
+        if (err) if (err) {
+          res.send({
+            status: "failed",
+            message: "Wrong ID"
+          })
+        };
         res.send(user_game)
       })
   } catch (error) {
