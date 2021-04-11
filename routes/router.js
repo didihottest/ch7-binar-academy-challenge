@@ -44,7 +44,7 @@ routers.get('/edit', (req, res) => {
     url: "http://localhost:3000/api/user",
     method: "GET",
     qs: {
-      id:id
+      id: id
     }
   }
   request(option, (error, response, body) => {
@@ -58,19 +58,19 @@ routers.get('/edit', (req, res) => {
           title: currentData.message,
           subtitle: "Go To Main Page",
           location: "/"
-      });
+        });
       } else {
         res.render("edit", {
           data: currentData
         });
-      }  
-      
+      }
+
     }
   })
 })
 
 // add user_game endpoint 
-routers.get('/add', (req, res)=>{
+routers.get('/add', (req, res) => {
   const status = req.query.status
   // condition if there is no status query
   if (status != undefined) {
@@ -83,7 +83,7 @@ routers.get('/add', (req, res)=>{
       status: null
     })
   }
-  
+
 })
 
 
@@ -113,7 +113,7 @@ routers.get('/api/users', async (req, res) => {
 routers.get('/api/user', async (req, res) => {
   const id = req.query.id;
   try {
-    User_Game.findOne({_id: id})
+    User_Game.findOne({ _id: id })
       .populate('userGameBiodata userGameHistory')
       .exec((err, user_game) => {
         if (err) {
@@ -187,7 +187,7 @@ routers.post("/api/user", multer().none(), async (req, res) => {
         }
       }
     })
-    
+
     console.log("user value" + newUser)
 
   } catch (error) {
@@ -195,7 +195,7 @@ routers.post("/api/user", multer().none(), async (req, res) => {
       status: 'Fail to add new data',
       message: error.message
     })
-  } 
+  }
 })
 
 // edit user_game entry api endpoint
@@ -206,35 +206,34 @@ routers.post('/api/useredit/:id', multer().none(), async (req, res) => {
     await User_Game.findOneAndUpdate({ _id: id }, {
       username: username,
       password: password
-    }, async (req, res) => {
+    },
+      { runValidators: true, context: 'query' }, // enable validator to make username only has unique value
+      (err) => { if (err) console.log(err.message) }, // display error message to console
+      async (req, res) => { // if there is no error forward to next update process
+        await User_Game_Biodata.updateOne( // update User_Game_Biodata value
+          { _id: res.userGameBiodata },
+          {
+            firstName: firstName,
+            lastName: lastName,
+            age: age
+          },
+          { runValidators: true }
+        )
 
-      await User_Game_Biodata.updateOne(
-        { _id: res.userGameBiodata },
-        {
-          firstName: firstName,
-          lastName: lastName,
-          age: age
-        },
-        { runValidators: true }
-      )
-
-      await User_Game_History.updateOne(
-        { _id: res.userGameHistory },
-        {
-          win: win,
-          lose: lose
-        },
-        { runValidators: true }
-      )
-    })
-    res.redirect("/dashboard?status=successedit")
+        await User_Game_History.updateOne( // update User_Game_History value
+          { _id: res.userGameHistory },
+          {
+            win: win,
+            lose: lose
+          },
+          { runValidators: true }
+        )
+      })
+    res.redirect("/dashboard?status=successedit") // redirect with success query
   } catch (error) {
-    res.send({
-      status: "failed to update",
-      message: error.message
-    })
+    res.redirect("/dashboard?status=duplicate") // redirect with data dupilcated query
   }
-  
+
 })
 
 // delete user_game entry API endpoint
