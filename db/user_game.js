@@ -1,12 +1,15 @@
 // use mongoose odm library
 const mongoose = require('mongoose');
+// unique validator library to identify duplicate value
+var uniqueValidator = require('mongoose-unique-validator');
 
 // create user_game schema
 const User_GameSchema = new mongoose.Schema({
   _id : mongoose.Schema.Types.ObjectId,
   username:{
     type: String,
-    required: [true, 'username must be filled']
+    required: [true, 'username must be filled'],
+    unique: true
   },
   password:{
     type: String,
@@ -15,6 +18,7 @@ const User_GameSchema = new mongoose.Schema({
   userGameBiodata: { type: mongoose.Schema.Types.ObjectId, ref: 'User_Game_Biodata' },
   userGameHistory: { type: mongoose.Schema.Types.ObjectId, ref: 'User_Game_History' }
 });
+User_GameSchema.plugin(uniqueValidator, { type: 'mongoose-unique-validator' });
 // create user_game model using user_gameSchema
 const User_Game = mongoose.model('User_Game', User_GameSchema);
 

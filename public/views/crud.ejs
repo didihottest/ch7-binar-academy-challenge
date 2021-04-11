@@ -20,7 +20,9 @@
         <% } else if (status =="successedit") { %>         
         <%- include('partial/message-edit') %> 
         <% } else if (status == "successdelete") { %> 
-        <%- include('partial/message-delete') %> 
+        <%- include('partial/message-delete') %>
+        <% } else if (status == "failed") { %> 
+        <%- include('partial/message-error') %>  
         <% } %>
 
         <table class="table table-bordered table-hover table-dark table-hover table-sm">

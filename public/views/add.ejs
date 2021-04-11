@@ -9,6 +9,9 @@
 <body>
     <%- include("partial/navbar") %>
     <div class="container-fluid">
+				<% if (status == "failed") { %> 
+        <%- include('partial/message-failed') %> 
+				<% } %>
         <h1 class="text-center">Edit Entry</h1>
         <form action="/api/user" method="POST">
 					<div class="form-group mt-2">
@@ -29,15 +32,15 @@
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="age">Age</label>
-						<input type="text" class="form-control" id="age" name="age" placeholder="Insert Age">
+						<input type="number" class="form-control" id="age" name="age" placeholder="Insert Age">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="win">Win History</label>
-						<input type="text" class="form-control" id="win" name="win" placeholder="Win Count">
+						<input type="number" class="form-control" id="win" name="win" placeholder="Win Count">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="lose">Lose History</label>
-						<input type="text" class="form-control" id="lose" name="lose" placeholder="Insert Lose Count">
+						<input type="number" class="form-control" id="lose" name="lose" placeholder="Insert Lose Count">
 					</div>
 					<button type="submit" class="btn btn-primary mt-3">Submit</button>
 				</form>

@@ -52,16 +52,38 @@ routers.get('/edit', (req, res) => {
       res.send("Error data list is not available")
     } else {
       let currentData = JSON.parse(body);
-      res.render("edit", {
-        data: currentData
+      if (currentData.status == "failed") {
+        res.render("error", {
+          headTitle: "Not Found!",
+          title: currentData.message,
+          subtitle: "Go To Main Page",
+          location: "/"
       });
+      } else {
+        res.render("edit", {
+          data: currentData
+        });
+      }  
+      
     }
   })
 })
 
 // add user_game endpoint 
 routers.get('/add', (req, res)=>{
-  res.render("add")
+  const status = req.query.status
+  // condition if there is no status query
+  if (status != undefined) {
+    res.render("add", {
+      status: status
+    })
+    console.log("firstif")
+  } else {
+    res.render("add", {
+      status: null
+    })
+  }
+  
 })
 
 
@@ -89,7 +111,12 @@ routers.get('/api/user', async (req, res) => {
     User_Game.findOne({_id: id})
       .populate('userGameBiodata userGameHistory')
       .exec((err, user_game) => {
-        if (err) return handleError(err);
+        if (err) {
+          res.send({
+            status: "failed",
+            message: "Wrong ID"
+          })
+        };
         res.send(user_game)
       })
   } catch (error) {
@@ -100,7 +127,7 @@ routers.get('/api/user', async (req, res) => {
   }
 })
 
-
+// add new user api end point
 routers.post("/api/user", multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const user_biodataID = new mongoose.Types.ObjectId()
@@ -148,12 +175,11 @@ routers.post("/api/user", multer().none(), async (req, res) => {
       }
     })
 
+    // verificator if new user has value or not
     if (newUser) {
       res.redirect("/dashboard?status=successadd")
     } else {
-      res.send({
-        status: 'Fail to add new data'
-      })
+      res.redirect("/add?status=failed")
     }
   } catch (error) {
     res.send({
@@ -163,6 +189,7 @@ routers.post("/api/user", multer().none(), async (req, res) => {
   } 
 })
 
+// edit user_game entry api endpoint
 routers.post('/api/useredit/:id', multer().none(), async (req, res) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const id = req.params.id
@@ -201,6 +228,7 @@ routers.post('/api/useredit/:id', multer().none(), async (req, res) => {
   
 })
 
+// delete user_game entry API endpoint
 routers.post('/api/userdelete/:id', async (req, res) => {
   const id = req.params.id;
   try {
