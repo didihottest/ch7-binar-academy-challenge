@@ -22,7 +22,9 @@
         <% } else if (status == "successdelete") { %> 
         <%- include('partial/message-delete') %>
         <% } else if (status == "failed") { %> 
-        <%- include('partial/message-error') %>  
+        <%- include('partial/message-error') %>
+        <% } else if (status == "duplicate") { %> 
+        <%- include('partial/message-duplicate') %>  
         <% } %>
 
         <table class="table table-bordered table-hover table-dark table-hover table-sm">

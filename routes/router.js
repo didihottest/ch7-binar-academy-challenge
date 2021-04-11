@@ -162,12 +162,6 @@ routers.post("/api/user", multer().none(), async (req, res) => {
       lose: lose
     })
 
-    newUser.save((err) => {
-      if (err) {
-        console.error(err)
-      }
-    })
-
     user_biodata.save((err) => {
       if (err) {
         console.error(err)
@@ -180,12 +174,22 @@ routers.post("/api/user", multer().none(), async (req, res) => {
       }
     })
 
-    // verificator if new user has value or not
-    if (newUser) {
-      res.redirect("/dashboard?status=successadd")
-    } else {
-      res.redirect("/add?status=failed")
-    }
+    newUser.save((err) => {
+      // if username is not unique tell dashboard that there is duplicated data
+      if (err) {
+        res.redirect("/dashboard?status=duplicate")
+      } else {
+        // verificator if new user has value or not
+        if (newUser) {
+          res.redirect("/dashboard?status=successadd")
+        } else {
+          res.redirect("/add?status=failed")
+        }
+      }
+    })
+    
+    console.log("user value" + newUser)
+
   } catch (error) {
     res.send({
       status: 'Fail to add new data',
