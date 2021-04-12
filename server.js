@@ -11,9 +11,13 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 // use morgan module
 const morgan = require('morgan');
+// call passport library
 const passport = require('passport')
+// call method override library
 const methodOverride = require('method-override')
+// call flash session library
 const flash = require('express-flash')
+// call express session library
 const session = require('express-session')
 // use express static middleware
 app.use(express.static(__dirname));
@@ -33,15 +37,21 @@ if (process.env.NODE_ENV === 'development') {
 app.set("view engine", "ejs");
 // set ejs directory to public folder
 app.set('views', './public/views');
+// use flash middleware
 app.use(flash())
+// create session
 app.use(session({
     secret: "7OOLrGhqBgWoO1XBVBXhGO8q",
     resave: false,
     saveUninitialized: false
 }))
+// initialize passport
 app.use(passport.initialize())
+// use session on passport
 app.use(passport.session())
+// use overide middleware
 app.use(methodOverride('_method'))
+// use router module
 app.use(routers)
 
 
