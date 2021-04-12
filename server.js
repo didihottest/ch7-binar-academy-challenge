@@ -7,12 +7,14 @@ const routers = require('./routes/router')
 const request = require("request")
 // Cross-Origin Resource Sharing module 
 const cors = require('cors');
-// import json file that contain login information to server
-const logins = require("./json/staticLogin.json")
 // use dot env module
 const dotenv = require('dotenv');
 // use morgan module
 const morgan = require('morgan');
+const passport = require('passport')
+const methodOverride = require('method-override')
+const flash = require('express-flash')
+const session = require('express-session')
 // use express static middleware
 app.use(express.static(__dirname));
 // Get request raw json from postman / api
@@ -31,7 +33,17 @@ if (process.env.NODE_ENV === 'development') {
 app.set("view engine", "ejs");
 // set ejs directory to public folder
 app.set('views', './public/views');
+app.use(flash())
+app.use(session({
+    secret: "7OOLrGhqBgWoO1XBVBXhGO8q",
+    resave: false,
+    saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(methodOverride('_method'))
 app.use(routers)
+
 
 // end point if server has an internal error
 app.use((error, req, res, next) => {
