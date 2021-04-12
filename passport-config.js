@@ -5,7 +5,7 @@ function initializePassport(passport, getUserByEmail, getUserById) {
   const authenticateUser = (email, password, done) => {
     const user = getUserByEmail(email)
     // if email wrong return this
-    if (user != user.email) {
+    if (user == null) {
       return done(null, false, { message: 'email incorrect' })
     }
     try {
