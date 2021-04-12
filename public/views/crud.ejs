@@ -10,11 +10,10 @@
     <%- include("partial/navbar") %>
     <div class="container-fluid">
       <h1 class="text-center">Game User List</h1>
-      <div class="text-center table-responsive-lg">
+      <div class="text-center table-responsive-xl">
         <a href="/add">
           <button class="btn btn-success mb-5 mt-3">Add New Entry</button>
         </a>
-
         <% if (status == "successadd") { %> 
         <%- include('partial/message-success') %> 
         <% } else if (status =="successedit") { %>         
@@ -26,7 +25,6 @@
         <% } else if (status == "duplicate") { %> 
         <%- include('partial/message-duplicate') %>  
         <% } %>
-
         <table class="table table-bordered table-hover table-dark table-hover table-sm">
           <thead>
             <tr>
@@ -55,12 +53,12 @@
               <td><%= data.userGameHistory.lose %></td>
               <td>
                 <a href="/edit?id=<%= data._id %>">
-                  <button class="btn btn-warning">Edit</button>
+                  <button class="btn btn-warning"><i class="fas fa-edit"></i> Edit</button>
                 </a>
               </td>
               <td>
                 <form action="/api/userdelete/<%= data._id %>" method="POST">
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                 </form>
               </td>
             </tr>
