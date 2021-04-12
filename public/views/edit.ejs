@@ -13,35 +13,35 @@
         <form action="/api/useredit/<%= data._id %>" method="POST">
 					<fieldset disabled>
 					<label class="mt-1" for="id" class="form-label">User ID</label>
-      		<input type="text" id="id" class="form-control" value="<%= data._id %>" required>
+      		<input type="text" id="id" class="form-control" value="<%= data._id %> ">
 				  </fieldset>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="username">Username</label>
-						<input type="text" class="form-control" id="username" name="username" value="<%= data.username %>" required>
+						<input type="text" class="form-control" id="username" name="username" value="<%= data.username %>">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="password">Password</label>
-						<input type="text" class="form-control" id="password" name="password" value="<%= data.password %>" required>
+						<input type="text" class="form-control" id="password" name="password" value="<%= data.password %>">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="firstName">First Name</label>
-						<input type="text" class="form-control" id="firstName" name="firstName" value="<%= data.userGameBiodata.firstName %>" required>
+						<input type="text" class="form-control" id="firstName" name="firstName" value="<%= data.userGameBiodata.firstName %>">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="lastName">Last Name</label>
-						<input type="text" class="form-control" id="lastName" name="lastName" value="<%= data.userGameBiodata.lastName %>" required>
+						<input type="text" class="form-control" id="lastName" name="lastName" value="<%= data.userGameBiodata.lastName %>">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="age">Age</label>
-						<input type="number" class="form-control" id="age" name="age" value="<%= data.userGameBiodata.age %>" required>
+						<input type="number" class="form-control" id="age" name="age" value="<%= data.userGameBiodata.age %>">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="win">Win History</label>
-						<input type="number" class="form-control" id="win" name="win" value="<%= data.userGameHistory.win %>" required>
+						<input type="number" class="form-control" id="win" name="win" value="<%= data.userGameHistory.win %>">
 					</div>
 					<div class="form-group mt-2">
 						<label class="mt-1" for="lose">Lose History</label>
-						<input type="number" class="form-control" id="lose" name="lose" value="<%= data.userGameHistory.lose %>" required>
+						<input type="number" class="form-control" id="lose" name="lose" value="<%= data.userGameHistory.lose %>">
 					</div>
 					<button type="submit" class="btn btn-primary mt-3">Submit</button>
 				</form>
