@@ -4,9 +4,9 @@ const app = express();
 // use mongoose ODM 
 const mongoose = require('mongoose');
 // use connection module to connect to database from route
-require('./../db/connection')
+require('./../model/connection')
 // import model from db file
-const { User_Game, User_Game_Biodata, User_Game_History } = require('./../db/user_game.js')
+const { User_Game, User_Game_Biodata, User_Game_History } = require('./../model/user_game.js')
 // to pass form data from body
 const multer = require('multer')
 // Get request raw json from postman / api

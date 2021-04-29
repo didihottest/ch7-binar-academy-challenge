@@ -24,9 +24,6 @@ const {checkAuthenticated, checkNotAuthenticated} = require('../middleware/authe
 app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
-const flash = require('express-flash')
-app.use(flash())
-
 // dashboard route from controller
 router.get('/', checkNotAuthenticated, home);
 router.get('/login', checkNotAuthenticated, login);

@@ -20,7 +20,7 @@ const flash = require('express-flash')
 // call express session library
 const session = require('express-session')
 // use express static middleware
-app.use(express.static(__dirname));
+app.use(express.static('public'));
 // Get request raw json from postman / api
 app.use(express.json());
 // use express bodyparser to pass data from body
@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'development') {
 // set view engine to ejs
 app.set("view engine", "ejs");
 // set ejs directory to public folder
-app.set('views', './public/views');
+app.set('views', 'views');
 // use flash middleware
 app.use(flash())
 // create session
