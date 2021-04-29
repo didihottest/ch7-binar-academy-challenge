@@ -6,7 +6,6 @@
   </head>
 
   <body>
-    <script src="/script/script.js"></script> 
     <%- include("partial/navbar") %>
     <div class="container-fluid">
       <h1 class="text-center">Game User List</h1>
@@ -14,17 +13,12 @@
         <a href="/add">
           <button class="btn btn-success mb-5 mt-3">Add New Entry</button>
         </a>
-        <% if (status == "successadd") { %> 
-        <%- include('partial/message-success') %> 
-        <% } else if (status =="successedit") { %>         
-        <%- include('partial/message-edit') %> 
-        <% } else if (status == "successdelete") { %> 
-        <%- include('partial/message-delete') %>
-        <% } else if (status == "failed") { %> 
-        <%- include('partial/message-error') %>
-        <% } else if (status == "duplicate") { %> 
-        <%- include('partial/message-duplicate') %>  
+        <% if (messageSuccess) { %>
+         <%- include("partial/message-green") %> 
         <% } %>
+        <% if (messageError) { %>
+          <%- include("partial/message-red") %> 
+         <% } %>
         <table class="table table-bordered table-hover table-dark table-hover table-sm">
           <thead>
             <tr>
@@ -57,9 +51,9 @@
                 </a>
               </td>
               <td>
-                <form action="/api/userdelete/<%= data._id %>" method="POST">
+                <a href="/delete?id=<%= data._id %>">
                   <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                </form>
+                </a>
               </td>
             </tr>
             <% }) %>
@@ -67,9 +61,5 @@
         </table>
       </div>
     </div>
-    <script
-      type="text/javascript"
-      src="/script/bootstrap.min.js"
-    ></script>
   </body>
 </html>

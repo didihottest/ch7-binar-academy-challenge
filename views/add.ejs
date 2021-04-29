@@ -2,53 +2,54 @@
 <html lang="en">
 
 <head>
-    <%- include("partial/head-meta.ejs") %>
-    <title>Add New Entry</title>
+	<%- include("partial/head-meta.ejs") %>
+	<title>Add New Entry</title>
 </head>
 
 <body>
-    <%- include("partial/navbar") %>
-    <div class="container-fluid">
-				<% if (status == "failed") { %> 
-        <%- include('partial/message-failed') %> 
-				<% } %>
-        <h1 class="text-center">Edit Entry</h1>
-        <form action="/api/user" method="POST">
-					<div class="form-group mt-2">
-						<label class="mt-1" for="username">Username</label>
-						<input type="text" class="form-control" id="username" name="username" placeholder="Insert User Name" required>
-					</div>
-					<div class="form-group mt-2">
-						<label class="mt-1" for="password">Password</label>
-						<input type="text" class="form-control" id="password" name="password" placeholder="Insert Password" required>
-					</div>
-					<div class="form-group mt-2">
-						<label class="mt-1" for="firstName">First Name</label>
-						<input type="text" class="form-control" id="firstName" name="firstName" placeholder="Insert First Name" required>
-					</div>
-					<div class="form-group mt-2">
-						<label class="mt-1" for="lastName">Last Name</label>
-						<input type="text" class="form-control" id="lastName" name="lastName" placeholder="Insert Last Name" required>
-					</div>
-					<div class="form-group mt-2">
-						<label class="mt-1" for="age">Age</label>
-						<input type="number" class="form-control" id="age" name="age" placeholder="Insert Age" required>
-					</div>
-					<div class="form-group mt-2">
-						<label class="mt-1" for="win">Win History</label>
-						<input type="number" class="form-control" id="win" name="win" placeholder="Win Count" required>
-					</div>
-					<div class="form-group mt-2">
-						<label class="mt-1" for="lose">Lose History</label>
-						<input type="number" class="form-control" id="lose" name="lose" placeholder="Insert Lose Count" required>
-					</div>
-					<button type="submit" class="btn btn-primary mt-3">Submit</button>
-				</form>
+	<%- include("partial/navbar") %>
+	<div class="container-fluid">
+		<% if (message) { %>
+		<div class="alert alert-danger"><%= message %> </div>
+		<% } %>
+		<h1 class="text-center">Edit Entry</h1>
+		<form action="/add" method="POST">
+			<div class="form-group mt-2">
+				<label class="mt-1" for="username">Username</label>
+				<input type="text" class="form-control" id="username" name="username" placeholder="Insert User Name" required>
+			</div>
+			<div class="form-group mt-2">
+				<label class="mt-1" for="password">Password</label>
+				<input type="text" class="form-control" id="password" name="password" placeholder="Insert Password" required>
+			</div>
+			<div class="form-group mt-2">
+				<label class="mt-1" for="firstName">First Name</label>
+				<input type="text" class="form-control" id="firstName" name="firstName" placeholder="Insert First Name"
+					required>
+			</div>
+			<div class="form-group mt-2">
+				<label class="mt-1" for="lastName">Last Name</label>
+				<input type="text" class="form-control" id="lastName" name="lastName" placeholder="Insert Last Name" required>
+			</div>
+			<div class="form-group mt-2">
+				<label class="mt-1" for="age">Age</label>
+				<input type="number" class="form-control" id="age" name="age" placeholder="Insert Age" required>
+			</div>
+			<div class="form-group mt-2">
+				<label class="mt-1" for="win">Win History</label>
+				<input type="number" class="form-control" id="win" name="win" placeholder="Win Count" required>
+			</div>
+			<div class="form-group mt-2">
+				<label class="mt-1" for="lose">Lose History</label>
+				<input type="number" class="form-control" id="lose" name="lose" placeholder="Insert Lose Count" required>
+			</div>
+			<button type="submit" class="btn btn-primary mt-3">Submit</button>
+		</form>
 
-    </div>
-    </div>
+	</div>
+	</div>
 
-    <script type="text/javascript" src="/script/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/script/bootstrap.min.js"></script>
 </body>
 
 </html>

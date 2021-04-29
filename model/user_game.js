@@ -1,7 +1,7 @@
 // use mongoose odm library
 const mongoose = require('mongoose');
 // unique validator library to identify duplicate value
-var uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require('mongoose-unique-validator');
 
 // create user_game schema
 const User_GameSchema = new mongoose.Schema({
@@ -43,5 +43,6 @@ const User_Game_HistorySchema = new mongoose.Schema({
   lose: Number
 })
 const User_Game_History = mongoose.model("User_Game_History", User_Game_HistorySchema)
+
 // create user game history model from schema
 module.exports = {User_Game, User_Game_Biodata, User_Game_History}

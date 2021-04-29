@@ -10,7 +10,7 @@
     <%- include("partial/navbar") %>
     <div class="container-fluid">
         <h1 class="text-center">Edit Entry</h1>
-        <form action="/api/useredit/<%= data._id %>" method="POST">
+        <form action="/edit?id=<%= data._id %>" method="POST">
 					<fieldset disabled>
 					<label class="mt-1" for="id" class="form-label">User ID</label>
       		<input type="text" id="id" class="form-control" value="<%= data._id %> " required>

@@ -9,6 +9,8 @@ require('./../model/connection')
 const { User_Game, User_Game_Biodata, User_Game_History } = require('./../model/user_game.js')
 // to pass form data from body
 const multer = require('multer')
+// use bcrypt to hashed password
+const bcrypt = require('bcrypt')
 // Get request raw json from postman / api
 app.use(express.json());
 // Get request form form-urlencoded form postman / api
@@ -19,16 +21,16 @@ exports.getUsers = (async (req, res, next) => {
     await User_Game.find()
       .populate('userGameBiodata userGameHistory')
       .exec((err, user_game) => {
-        if (err) if (err) {
+        if (err) {
           res.send({
             status: "failed",
             message: "Wrong ID"
           })
         };
-        res.send(user_game)
+        res.status(201).json(user_game)
       })
   } catch (error) {
-    res.send({
+    res.status(400).json({
       status: "Failed to get data",
       message: error.message
     })
@@ -48,10 +50,10 @@ exports.getUser = (async (req, res, next) => {
             message: "Wrong ID"
           })
         };
-        res.send(user_game)
+        res.status(201).json(user_game)
       })
   } catch (error) {
-    res.send({
+    res.status(400).json({
       status: "Failed to get data",
       message: error.message
     })
@@ -64,11 +66,14 @@ exports.newUser = (multer().none(), async (req, res, next) => {
   const user_biodataID = new mongoose.Types.ObjectId() // generate unique id for user_biodataID
   const user_historyID = new mongoose.Types.ObjectId() // user_historyID
   try {
+    // hashe password using bcrypt
+    const salt = await bcrypt.genSalt();
+    hashedPassword = await bcrypt.hash(password, salt)
     // insert new data to user_games collection
     const newUser = new User_Game({
       _id: new mongoose.Types.ObjectId(),
       username: username,
-      password: password,
+      password: hashedPassword,
       userGameBiodata: user_biodataID,
       userGameHistory: user_historyID
     })
@@ -101,21 +106,26 @@ exports.newUser = (multer().none(), async (req, res, next) => {
     })
     // save new data to collections
     newUser.save((err) => {
-      // if username is not unique tell dashboard that there is duplicated data
       if (err) {
-        res.redirect("/dashboard?status=duplicate")
+        res.status(400).json({
+          status: 'failed',
+          message: err.message
+        })
       } else {
         // verificator if new user has value or not
         if (newUser) {
-          res.redirect("/dashboard?status=successadd")
+          res.status(201).json(newUser)
         } else {
-          res.redirect("/add?status=failed")
+          res.status(400).json({
+            status: 'Fail to add new data',
+            message: error.message
+          })
         }
       }
     })
 
   } catch (error) {
-    res.send({
+    res.status(400).json({
       status: 'Fail to add new data',
       message: error.message
     })
@@ -153,9 +163,17 @@ exports.editUser = (multer().none(), async (req, res, next) => {
           { runValidators: true }
         )
       })
-    res.redirect("/dashboard?status=successedit") // redirect with success query
+      res.status(201).json({
+        status: "success",
+        message: "successfully Deleted"
+      })
   } catch (error) {
-    res.redirect("/dashboard?status=duplicate") // redirect with data dupilcated query
+    if (error){
+      res.status(400).json({
+        status: "error",
+        message: error.message
+      })
+    }
   }
 
 })
@@ -172,12 +190,15 @@ exports.deleteUser = (async (req, res) => {
         console.error(error.message)
       }
     })
-    // redirect if success
-    res.redirect("/dashboard?status=successdelete")
+    res.status(201).json({
+      status: "success",
+      message: "Susccessfully Deleted"
+    })
   } catch (error) {
-    res.send({
+    res.status(400).json({
       status: "failed to delete",
       message: error.message
     })
   }
 })
+

@@ -1,116 +1,134 @@
-const loginData = require("../json/staticLogin.json")
-const passport = require('passport')
-const initializePassport = require('../passport-config')
-initializePassport(
-  passport,
-  email => loginData.find(user => user.email === email),
-  id => loginData.find(user => user.id === id)
-)
-
 // use request module to pull data from API
-const request = require('request');
+const axios = require('axios');
+// use express validation module
+const { validationResult } = require('express-validator');
+// json web token module
+
 
 //home end route 
-exports.home = (req, res, next) => {
+exports.getHome = (req, res, next) => {
   res.render('home')
 }
 
-//login page endpoint 
-exports.login =  (req, res, next) => {
-  const status = req.query.status;
-  if (status != undefined) {
-    res.render('login', {
-      status: status
-    })
-  } else {
-    res.render('login', {
-      status: null
-    })
-  }
 
-}
-// authenticate login information
-exports.loginPost = passport.authenticate('local', {
-  successRedirect: '/dashboard', // if true redirect to dashboard
-  failureRedirect: '/login', // if false redirect to login
-  failureFlash: true
-})
 
 // dashboard end route
-exports.dashboard = (req, res, next) => {
-  let status = req.query.status;
-
-  let option = {
-    url: "http://localhost:3000/api/users",
-    method: "GET",
+exports.getDashboard = (req, res, next) => {
+  let messageSuccess = req.flash('success')
+  if (messageSuccess.length > 0) {
+    messageSuccess = messageSuccess[0]
+  } else {
+    messageSuccess = null
   }
-  // get data from api
-  request(option, (error, response, body) => {
+  let messageError = req.flash('error')
+  if (messageError.length > 0) {
+    messageError = messageError[0]
+  } else {
+    messageError = null
+  }
+  axios.get("http://localhost:3000/api/users").then(response => {
+    res.render("crud", {
+      data: response.data,
+      messageSuccess,
+      messageError
+    })
+  }).catch(error => {
     if (error) {
-      res.send("Error data list is not available")
-    } else {
-      let currentData = JSON.parse(body);
-      //send data to crud ejs
-      res.render("crud", {
-        data: currentData,
-        status: status
-      });
+      console.log(error)
     }
   })
 }
 
 // edit page end route
-exports.edit = (req, res, next) => {
+exports.getEdit = (req, res, next) => {
   let id = req.query.id;
   // get data from api
-  let option = {
-    url: "http://localhost:3000/api/user",
-    method: "GET",
-    qs: {
-      id: id
-    }
-  }
-  request(option, (error, response, body) => {
-    if (error) {
-      res.send("Error data list is not available")
+  axios.get(`http://localhost:3000/api/user?id=${id}`).then(response => {
+    console.log(response.data.status)
+    if (response.data.status == "failed") {
+      res.render("error", {
+        headTitle: "Not Found!",
+        title: response.data.message,
+        subtitle: "Go To Main Page",
+        location: "/"
+      });
     } else {
-      let currentData = JSON.parse(body);
-      if (currentData.status == "failed") {
+      res.render('edit', {
+        data: response.data
+      })
+    }
+  }).catch((error) => {
+    console.log(error)
+  })
+}
+
+exports.postEdit = (req, res, next) => {
+  let id = req.query.id;
+  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  // get data from api
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    axios.get(`http://localhost:3000/api/user?id=${id}`).then(response => {
+      if (response.data.status == "failed") {
         res.render("error", {
           headTitle: "Not Found!",
-          title: currentData.message,
+          title: response.data.message,
           subtitle: "Go To Main Page",
           location: "/"
         });
       } else {
-        // send data to /edit 
-        res.render("edit", {
-          data: currentData
-        });
+        res.render('edit', {
+          data: response.data
+        })
       }
-
-    }
-  })
-}
-
-// add user_game endpoint 
-exports.add = (req, res, next) => {
-  const status = req.query.status
-  // condition if there is no status query
-  if (status != undefined) {
-    res.render("add", {
-      status: status
+    }).catch((error) => {
+      console.log(error)
     })
-    console.log("firstif")
   } else {
-    res.render("add", {
-      status: null
-    })
+    axios.post(`http://localhost:3000/api/useredit/${id}`, {
+      username, password, firstName, lastName, age, win, lose
+    }).then((response) => {
+      res.redirect('/dashboard')
+    }).catch((error => {
+      if (error) console.log(error)
+    }))
   }
 
 }
-// logout user
-exports.logout = (req, res) => {
-  req.logOut()
-  res.redirect('/login')
+
+// add user_game endpoint 
+exports.getAdd = (req, res, next) => {
+  res.render("add", {
+    message: null
+  })
+}
+
+exports.postAdd = (req, res, next) => {
+  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  axios.post("http://localhost:3000/api/user", {
+    username, password, firstName, lastName, age, win, lose
+  }).then(response => {
+    req.flash("success", "Data Successfully Added")
+    res.redirect('/dashboard')
+  }).catch(error => {
+    let message = error.response.data.message;
+    if (message.includes("User_Game validation failed: username: Error, expected `username` to be unique.")) {
+      message = "Username Already Used, Use Another Name"
+    }
+    res.render("add", {
+      message
+    })
+  })
+}
+
+exports.getDelete = (req, res, next) => {
+  const id = req.query.id
+  axios.post(`http://localhost:3000/api/userdelete/${id}`, {}).then(response => {
+    req.flash('success', "Successfully Deleted")
+    res.redirect('/dashboard')
+  }).catch(error => {
+    console.log(error)
+    req.flash('error', "Delete Operation Failed")
+    res.redirect('/dashboard')
+  })
 }
