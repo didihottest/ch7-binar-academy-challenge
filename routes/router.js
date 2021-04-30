@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const router = express.Router();
-
+const multer = require('multer')
 const {requireAuth, checkUser} = require('../middleware/authAdminMiddleware')
 
 // auth controller 
@@ -11,8 +11,8 @@ const {
   postLoginDashboard,
   getLogoutDashboard,
   getSignupDashboard,
-  postSignupDashboard
-} = require('../controllers/auth')
+  postSignupDashboard,
+  postLoginGame } = require('../controllers/auth')
 
 // import dashboard controller function
 const {
@@ -31,26 +31,28 @@ const {
   newUser,
   editUser,
   deleteUser } = require('../controllers/api')
+
+const {getGame} = require('../controllers/game')
+
 // Get request raw json from postman / api
 app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
-
-// get all user_games data api
+// all user_games data api endpoint
 router.get('/api/users', getUsers);
 router.get('/api/user', getUser);
-router.post('/api/user', newUser);
-router.post('/api/useredit/:id', editUser);
+router.post('/api/user', multer().none(), newUser);
+router.post('/api/useredit/:id', multer().none(), editUser);
 router.post('/api/userdelete/:id', deleteUser);
 
 // dashboard route from controller
 router.get('/', getHome);
-router.get('/dashboard', requireAuth, getDashboard);
+router.get('/dashboard', checkUser,  requireAuth, getDashboard);
 router.get('/edit', requireAuth, getEdit);
-router.get('/add', requireAuth, getAdd);
-router.get('/delete', requireAuth, getDelete)
-router.post('/edit', requireAuth, postEdit);
-router.post('/add', requireAuth, postAdd);
+router.get('/add', checkUser, requireAuth, getAdd);
+router.get('/delete', checkUser, requireAuth, getDelete)
+router.post('/edit', checkUser, requireAuth, postEdit);
+router.post('/add', checkUser, requireAuth, postAdd);
 
 // auth route
 router.get('/login-dashboard', getLoginDashboard);
@@ -58,5 +60,9 @@ router.get('/signup-dashboard', getSignupDashboard)
 router.post('/login-dashboard', postLoginDashboard);
 router.post('/signup-dashboard', postSignupDashboard);
 router.get('/logout-dashboard', getLogoutDashboard);
+router.post('/login-game', postLoginGame)
+
+//game route 
+router.get('/game', getGame)
 
 module.exports = router

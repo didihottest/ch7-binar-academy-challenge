@@ -16,7 +16,7 @@ app.use(express.json());
 // Get request form form-urlencoded form postman / api
 app.use(express.urlencoded({ extended: true }));
 // display all users entry from database
-exports.getUsers = (async (req, res, next) => {
+exports.getUsers = async (req, res, next) => {
   try {
     await User_Game.find()
       .populate('userGameBiodata userGameHistory')
@@ -35,10 +35,10 @@ exports.getUsers = (async (req, res, next) => {
       message: error.message
     })
   }
-})
+}
 
 // get one user_games data api
-exports.getUser = (async (req, res, next) => {
+exports.getUser = async (req, res, next) => {
   const id = req.query.id;
   try {
     User_Game.findOne({ _id: id })
@@ -58,11 +58,11 @@ exports.getUser = (async (req, res, next) => {
       message: error.message
     })
   }
-})
+}
 
 // add new user api end point
-exports.newUser = (multer().none(), async (req, res, next) => {
-  const { username, password, firstName, lastName, age, win, lose } = req.body;
+exports.newUser = async (req, res, next) => {
+  const { username, password, firstName, lastName, age, win, lose, role } = req.body;
   const user_biodataID = new mongoose.Types.ObjectId() // generate unique id for user_biodataID
   const user_historyID = new mongoose.Types.ObjectId() // user_historyID
   try {
@@ -74,6 +74,7 @@ exports.newUser = (multer().none(), async (req, res, next) => {
       _id: new mongoose.Types.ObjectId(),
       username: username,
       password: hashedPassword,
+      role:role,
       userGameBiodata: user_biodataID,
       userGameHistory: user_historyID
     })
@@ -130,10 +131,10 @@ exports.newUser = (multer().none(), async (req, res, next) => {
       message: error.message
     })
   }
-})
+}
 
 // edit user_game entry api endpoint
-exports.editUser = (multer().none(), async (req, res, next) => {
+exports.editUser = async (req, res, next) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const id = req.params.id
   try {
@@ -176,10 +177,10 @@ exports.editUser = (multer().none(), async (req, res, next) => {
     }
   }
 
-})
+}
 
 // delete user_game entry API endpoint
-exports.deleteUser = (async (req, res) => {
+exports.deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
     await User_Game.findOneAndDelete({ _id: id }, async (err, res) => { // delete user_games collections
@@ -200,5 +201,5 @@ exports.deleteUser = (async (req, res) => {
       message: error.message
     })
   }
-})
+}
 

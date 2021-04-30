@@ -39,7 +39,7 @@
             <tr>
               <td><%= index+1 %></td>
               <td><%= data.username %></td>
-              <td><%= data.password %></td>
+              <td><%= data.password.substring(0, 13) + " ..." %></td>
               <td><%= data.userGameBiodata.firstName %></td>
               <td><%= data.userGameBiodata.lastName %></td>
               <td><%= data.userGameBiodata.age %></td>

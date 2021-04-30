@@ -65,6 +65,7 @@ exports.getEdit = (req, res, next) => {
 exports.postEdit = (req, res, next) => {
   let id = req.query.id;
   const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const role = 'admin';
   // get data from api
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -86,7 +87,7 @@ exports.postEdit = (req, res, next) => {
     })
   } else {
     axios.post(`http://localhost:3000/api/useredit/${id}`, {
-      username, password, firstName, lastName, age, win, lose
+      username, password, firstName, lastName, age, win, lose, role
     }).then((response) => {
       res.redirect('/dashboard')
     }).catch((error => {
@@ -105,8 +106,10 @@ exports.getAdd = (req, res, next) => {
 
 exports.postAdd = (req, res, next) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const role = "player";
+  console.log(role)
   axios.post("http://localhost:3000/api/user", {
-    username, password, firstName, lastName, age, win, lose
+    username, password, firstName, lastName, age, win, lose, role
   }).then(response => {
     req.flash("success", "Data Successfully Added")
     res.redirect('/dashboard')

@@ -1,17 +1,17 @@
-const { response } = require('express')
 const jwt = require('jsonwebtoken')
 // call user_admin model
 const User_Admin = require('../model/user_admin')
-
+const {User_Game} = require('../model/user_game')
+// middleware for determining flash message
 const flashDeterminer = require('./../utility/flashdeterminer')
 
 // JWT token generator
 // set token expire time
 const maxAge = 3 * 24 * 60 * 60
-const createToken = (id) => {
+const createToken = (id, role) => {
   //{id is value}, {'secret is encrypt key'}, { expiresIn is for max age of token }
   return jwt.sign({
-    id
+    id, role
   }, 'secret', {
     expiresIn: maxAge
   })
@@ -38,7 +38,7 @@ exports.postLoginDashboard = async (req, res, next) => {
   } = req.body;
   try {
     const user = await User_Admin.login(email, password)
-    const token = createToken(user._id)
+    const token = createToken(user._id, user.role)
     res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
     res.redirect('/dashboard')
   } catch (error) {
@@ -47,9 +47,6 @@ exports.postLoginDashboard = async (req, res, next) => {
       res.redirect('/login-dashboard')
     }
   }
-
-
-
 }
 
 exports.getSignupDashboard = (req, res, next) => {
@@ -81,4 +78,15 @@ exports.postSignupDashboard = async (req, res, next) => {
 exports.getLogoutDashboard = (req, res) => {
   res.cookie('jwt', '', {maxAge:1})
   res.redirect('/')
+}
+
+
+// login player 
+
+exports.postLoginGame = async (req, res, next) => {
+  const {username, password} = req.body;
+  const user = await User_Game.login(username, password)
+  const token = createToken(user._id, user.role)
+  res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
+  res.redirect('/game')
 }

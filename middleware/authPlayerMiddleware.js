@@ -1,25 +1,24 @@
 const jwt = require('jsonwebtoken')
-const User_Admin = require('../model/user_admin')
+const User_Game = require('../model/user_game')
 
 const requireAuth = (req, res, next)=>{
 
   const token = req.cookies.jwt
-
   // check json web token exist & verified
   if (token) {
     jwt.verify(token, 'secret', (err, decodedToken) => {
       if(err){
-        res.redirect('/login-dashboard')
+        res.redirect('/login-game')
       } else {
-        if(decodedToken.role != 'admin') {
-          req.flash('error', "you need to be admin to access this page")
-          res.redirect('/login-dashboard')
+        if(decodedToken.role != 'player') {
+          req.flash('error', "you are not player")
+          res.redirect('/login-game')
         }
         next();
       }
     })
   } else {
-    res.redirect('/login-dashboard')
+    res.redirect('/login-game')
   }
 }
 
@@ -33,8 +32,8 @@ const checkUser = (req, res, next)=>{
         res.locals.user = null
         next();
       } else {
-        let user = await User_Admin.findById(decodedToken.id)
-        res.locals.user = user.email
+        let user = await User_Game.findById(decodedToken.id)
+        res.locals.user = user.username
         next();
       }
     })
