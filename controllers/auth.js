@@ -109,7 +109,7 @@ exports.postLoginGame = async (req, res, next) => {
     const user = await User_Game.login(username, password)
     const token = createToken(user._id, user.role)
     res.status(201).json({
-      message: token
+      token: token
     })
   } catch (error) {
   // error message handling using flash module
