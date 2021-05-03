@@ -4,7 +4,7 @@ const app = express();
 const router = express.Router();
 const multer = require('multer')
 const {requireAuth, checkUser} = require('../middleware/authAdminMiddleware')
-const {requirePlayerAuth, checkPlayer} = require('../middleware/authPlayerMiddleware')
+const {requirePlayerAuth} = require('../middleware/authPlayerMiddleware')
 // auth controller 
 const {
   getLoginDashboard,
@@ -65,6 +65,6 @@ router.post('/login-game', postLoginGame)
 //game route
 router.get('/player-history', requirePlayerAuth, playerHistory)
 router.post('/fight/:roomname', requirePlayerAuth, fight)
-router.post('/create-room', requirePlayerAuth, checkPlayer, createRoom)
+router.post('/create-room', requirePlayerAuth, createRoom)
 
 module.exports = router
