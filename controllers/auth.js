@@ -20,11 +20,16 @@ const createToken = (id, role) => {
 
 //login page endpoint 
 exports.getLoginDashboard = (req, res, next) => {
-  const message = flashDeterminer(req)
-  res.render('login-dashboard', {
-    messageSuccess: message[0],
-    messageError: message[1]
-  })
+  try {
+    const message = flashDeterminer(req)
+    res.render('login-dashboard', {
+      messageSuccess: message[0],
+      messageError: message[1]
+    })
+  } catch (error) {
+    req.flash('error', error.message)
+    res.redirect('/')
+  }
 }
 // authenticate login information
 exports.postLoginDashboard = async (req, res, next) => {
@@ -51,11 +56,16 @@ exports.postLoginDashboard = async (req, res, next) => {
 
 exports.getSignupDashboard = (req, res, next) => {
   // error message handling using flash module
-  const message = flashDeterminer(req)
-  res.render('signup-dashboard', {
-    messageSuccess: message[0],
-    messageError: message[1]
-  })
+  try {
+    const message = flashDeterminer(req)
+    res.render('signup-dashboard', {
+      messageSuccess: message[0],
+      messageError: message[1]
+    })
+  } catch (error) {
+    req.flash('error', error.message)
+    res.redirect('/')
+  }
 }
 
 // signup post controller 
@@ -65,7 +75,7 @@ exports.postSignupDashboard = async (req, res, next) => {
     const role = "admin"
     // insert data to database
     const userAdmin = await User_Admin.create({ email, password, role })
-    req.flash('success', `${userAdmin[email]} Successfully Created, Please Login`)
+    req.flash('success', `${userAdmin.email} Account Successfully Created, Please Login`)
     res.redirect('/login-dashboard')
   } catch (error) {
     // error handling
@@ -74,25 +84,34 @@ exports.postSignupDashboard = async (req, res, next) => {
       res.redirect('/signup-dashboard')
     }
   }
-
-
 }
 
 // logout user
 exports.getLogoutDashboard = (req, res) => {
-  res.cookie('jwt', '', { maxAge: 1 })
-  res.redirect('/')
+  try {
+    res.cookie('jwt', '', { maxAge: 1 })
+    res.redirect('/')
+  } catch (error) {
+    req.flash('error', error.message)
+    res.redirect('/')
+  }
 }
 
 
 // login player 
 exports.postLoginGame = async (req, res, next) => {
   const { username, password } = req.body;
-  const user = await User_Game.login(username, password)
-  const token = createToken(user._id, user.role)
-  res.status(201).json({
-    message: token
-  })
+  try {
+    const user = await User_Game.login(username, password)
+    const token = createToken(user._id, user.role)
+    res.status(201).json({
+      message: token
+    })
+  } catch (error) {
+    req.flash('error', error.message)
+    res.redirect('/login-game')
+  }
+
 }
 
 // register player 
