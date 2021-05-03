@@ -53,16 +53,18 @@ exports.postLoginDashboard = async (req, res, next) => {
     }
   }
 }
-
+// signup as admin dashboard controller get
 exports.getSignupDashboard = (req, res, next) => {
   // error message handling using flash module
   try {
     const message = flashDeterminer(req)
+    // render page
     res.render('signup-dashboard', {
       messageSuccess: message[0],
       messageError: message[1]
     })
   } catch (error) {
+    // error message handling using flash module
     req.flash('error', error.message)
     res.redirect('/')
   }
@@ -80,6 +82,7 @@ exports.postSignupDashboard = async (req, res, next) => {
   } catch (error) {
     // error handling
     if (error) {
+      // error message handling using flash module
       req.flash('error', error.message)
       res.redirect('/signup-dashboard')
     }
@@ -92,6 +95,7 @@ exports.getLogoutDashboard = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 })
     res.redirect('/')
   } catch (error) {
+    // error message handling using flash module
     req.flash('error', error.message)
     res.redirect('/')
   }
@@ -108,6 +112,7 @@ exports.postLoginGame = async (req, res, next) => {
       message: token
     })
   } catch (error) {
+  // error message handling using flash module
     req.flash('error', error.message)
     res.redirect('/login-game')
   }
