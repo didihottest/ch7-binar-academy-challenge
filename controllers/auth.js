@@ -90,8 +90,6 @@ exports.postLoginGame = async (req, res, next) => {
   const { username, password } = req.body;
   const user = await User_Game.login(username, password)
   const token = createToken(user._id, user.role)
-  // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
-  // res.redirect('/game')
   res.status(201).json({
     message: token
   })
