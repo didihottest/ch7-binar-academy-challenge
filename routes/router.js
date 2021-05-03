@@ -12,7 +12,9 @@ const {
   getLogoutDashboard,
   getSignupDashboard,
   postSignupDashboard,
-  postLoginGame, getRegisterPlayer } = require('../controllers/auth')
+  postLoginGame, 
+  getRegisterPlayer,
+  postRegisterPlayer } = require('../controllers/auth')
 
 // import dashboard controller function
 const {
@@ -66,7 +68,7 @@ router.get('/logout-dashboard', getLogoutDashboard);
 // use sent token to access restricted endpoint as bearer token in postman
 router.post('/login-game', postLoginGame)
 // register user post
-router.post('/register-game', postAdd);
+router.post('/register-game', postRegisterPlayer);
 // register user get
 router.get('/register-game', getRegisterPlayer)
 

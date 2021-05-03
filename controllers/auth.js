@@ -4,7 +4,8 @@ const User_Admin = require('../model/user_admin')
 const { User_Game } = require('../model/user_game')
 // middleware for determining flash message
 const flashDeterminer = require('./../utility/flashdeterminer')
-
+// axios module 
+const axios = require('axios')
 // JWT token generator
 // set token expire time
 const maxAge = 3 * 24 * 60 * 60
@@ -67,7 +68,7 @@ exports.postSignupDashboard = async (req, res, next) => {
     req.flash('success', `${userAdmin[email]} Successfully Created, Please Login`)
     res.redirect('/login-dashboard')
   } catch (error) {
-      // error handling
+    // error handling
     if (error) {
       req.flash('error', error.message)
       res.redirect('/signup-dashboard')
@@ -101,5 +102,28 @@ exports.getRegisterPlayer = (req, res, next) => {
   res.status(200).json({
     title: "register your new account",
     message: "post your username, password, firstName, lastName, age in postman with the same exact value"
+  })
+}
+// register player endpoint
+exports.postRegisterPlayer = (req, res, next) => {
+  const { username, password, firstName, lastName, age } = req.body;
+  const win = req.body.win || "0"
+  const lose = req.body.lose || "0"
+  const role = "player";
+  // post data to api
+  axios.post("http://localhost:3000/api/user", {
+    username, password, firstName, lastName, age, win, lose, role
+  }).then(response => {
+    // send json if successfull
+    res.status(201).json({
+      status: "success",
+      message: response.data
+    })
+  }).catch(error => {
+    // if error use this function to send error message
+    res.status(400).json({
+      status: "failed to add new user",
+      message: "make sure to fill all the sername, password, firstName, lastName, and age data or there is a duplicate username"
+    })
   })
 }
