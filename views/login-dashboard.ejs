@@ -21,8 +21,11 @@
         </form>
         <!-- show error message if user has entered wrong login information -->
         <div class="login-status mt-3">
-            <% if(status == 'fail') { %>  
-            <%- include('partial/message') %>
+            <% if (messageSuccess) { %>
+            <%- include("partial/message-green") %>
+            <% } %>
+            <% if (messageError) { %>
+            <%- include("partial/message-red") %>
             <% } %>
         </div>
     </main>

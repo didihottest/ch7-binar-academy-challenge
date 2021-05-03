@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 // call user_admin model
 const User_Admin = require('../model/user_admin')
-const {User_Game} = require('../model/user_game')
+const { User_Game } = require('../model/user_game')
 // middleware for determining flash message
 const flashDeterminer = require('./../utility/flashdeterminer')
 
@@ -19,16 +19,11 @@ const createToken = (id, role) => {
 
 //login page endpoint 
 exports.getLoginDashboard = (req, res, next) => {
-  const status = req.query.status;
-  if (status != undefined) {
-    res.render('login-dashboard', {
-      status: status
-    })
-  } else {
-    res.render('login-dashboard', {
-      status: null
-    })
-  }
+  const message = flashDeterminer(req)
+  res.render('login-dashboard', {
+    messageSuccess: message[0],
+    messageError: message[1]
+  })
 }
 // authenticate login information
 exports.postLoginDashboard = async (req, res, next) => {
@@ -57,12 +52,14 @@ exports.getSignupDashboard = (req, res, next) => {
   })
 }
 
+// signup post controller 
 exports.postSignupDashboard = async (req, res, next) => {
   try {
     const { email, password } = req.body
     const role = "admin"
+    // insert data to database
     const userAdmin = await User_Admin.create({ email, password, role })
-    req.flash('success',`${userAdmin[email]} Successfully Created, Please Login`)
+    req.flash('success', `${userAdmin[email]} Successfully Created, Please Login`)
     res.redirect('/login-dashboard')
   } catch (error) {
     if (error) {
@@ -76,7 +73,7 @@ exports.postSignupDashboard = async (req, res, next) => {
 
 // logout user
 exports.getLogoutDashboard = (req, res) => {
-  res.cookie('jwt', '', {maxAge:1})
+  res.cookie('jwt', '', { maxAge: 1 })
   res.redirect('/')
 }
 
@@ -84,7 +81,7 @@ exports.getLogoutDashboard = (req, res) => {
 // login player 
 
 exports.postLoginGame = async (req, res, next) => {
-  const {username, password} = req.body;
+  const { username, password } = req.body;
   const user = await User_Game.login(username, password)
   const token = createToken(user._id, user.role)
   // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
