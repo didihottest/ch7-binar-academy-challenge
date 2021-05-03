@@ -160,8 +160,6 @@ exports.fight = async (req, res, next) => {
       message: "request Error"
     })
   }
-
-
 }
 // create room endpoint
 exports.createRoom = async (req, res, next) => {
