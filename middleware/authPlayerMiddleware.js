@@ -7,7 +7,7 @@ const requirePlayerAuth = async (req, res, next) => {
   const authHeader = req.get('Authorization');
   // check if there is header
   if (!authHeader) {
-    res.send(401).json({
+    res.status(401).json({
       message: "Not Authorized"
     })
   } else {
@@ -17,12 +17,12 @@ const requirePlayerAuth = async (req, res, next) => {
       // verify token and decrpyt it using jwt
       decodedToken = jwt.verify(token, 'secret');
     } catch (err) {
-      res.send(401).json({
+      res.status(401).json({
         message: "Not Authorized"
       })
     }
     if (!decodedToken) {
-      res.send(401).json({
+      res.status(401).json({
         message: "Not Authorized"
       })
     } else {

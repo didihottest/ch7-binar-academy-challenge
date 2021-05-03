@@ -32,7 +32,7 @@ const {
   editUser,
   deleteUser } = require('../controllers/api')
 
-const {fight, createRoom} = require('../controllers/game')
+const {fight, createRoom, playerHistory} = require('../controllers/game')
 
 // Get request raw json from postman / api
 app.use(express.json());
@@ -62,7 +62,8 @@ router.post('/signup-dashboard', postSignupDashboard);
 router.get('/logout-dashboard', getLogoutDashboard);
 router.post('/login-game', postLoginGame)
 
-//game route 
+//game route
+router.get('/player-history', requirePlayerAuth, playerHistory)
 router.post('/fight/:roomname', requirePlayerAuth, fight)
 router.post('/create-room', requirePlayerAuth, checkPlayer, createRoom)
 
