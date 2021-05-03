@@ -123,7 +123,7 @@ exports.postRegisterPlayer = (req, res, next) => {
     // if error use this function to send error message
     res.status(400).json({
       status: "failed to add new user",
-      message: "make sure to fill all the sername, password, firstName, lastName, and age data or there is a duplicate username"
+      message: "make sure to fill all the username, password, firstName, lastName, and age data or there is a duplicate username"
     })
   })
 }
