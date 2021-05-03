@@ -48,7 +48,7 @@ router.post('/api/userdelete/:id', deleteUser);
 // dashboard route from controller
 router.get('/', getHome);
 router.get('/dashboard', checkUser,  requireAuth, getDashboard);
-router.get('/edit', requireAuth, getEdit);
+router.get('/edit', checkUser, requireAuth, getEdit);
 router.get('/add', checkUser, requireAuth, getAdd);
 router.get('/delete', checkUser, requireAuth, getDelete)
 router.post('/edit', checkUser, requireAuth, postEdit);
