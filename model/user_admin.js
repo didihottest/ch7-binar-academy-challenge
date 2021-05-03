@@ -31,7 +31,7 @@ User_AdminSchema.pre('save', async function (next){
   this.password = await bcrypt.hash(this.password, salt)
   next();
 })
-
+// static function for login verification
 User_AdminSchema.statics.login = async function (email, password){
   const user = await this.findOne({email});
   if (user){
