@@ -165,11 +165,10 @@ exports.fight = async (req, res, next) => {
 exports.createRoom = async (req, res, next) => {
   const name = req.body.name
   const id = req.userId
-
-  console.log(name, id)
   try {
+    // find match id on usergame and get that data
     const userActive = await User_Game.findOne({_id:id})
-    // create room
+    // create room using name from body and creator name from userActive
     const createdRoom = await Room.create({ name: name, creator: userActive.username  })
     // send message if room created
     res.status(201).json({
