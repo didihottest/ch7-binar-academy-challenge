@@ -188,7 +188,7 @@ exports.playerHistory = async (req, res, next) => {
     try {
       // populate user active database
       User_Game.findOne({ _id: id })
-        .populate('userGameHistory')
+        .populate('userGameHistory userGameBiodata')
         .exec((err, activeUser) => {
           if (err) {
             res.send({
@@ -196,9 +196,13 @@ exports.playerHistory = async (req, res, next) => {
               message: "Wrong ID"
             })
           };
+          console.log(activeUser)
           // assign active user data to variable
           let activeUserhistory = {
             username: activeUser.username,
+            firstName: activeUser.userGameBiodata.firstName,
+            lastName: activeUser.userGameBiodata.lastName,
+            age: activeUser.userGameBiodata.age,
             win: activeUser.userGameHistory.win,
             lose: activeUser.userGameHistory.lose
           }
