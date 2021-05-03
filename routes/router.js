@@ -12,7 +12,7 @@ const {
   getLogoutDashboard,
   getSignupDashboard,
   postSignupDashboard,
-  postLoginGame } = require('../controllers/auth')
+  postLoginGame, getRegisterPlayer } = require('../controllers/auth')
 
 // import dashboard controller function
 const {
@@ -54,13 +54,21 @@ router.get('/delete', checkUser, requireAuth, getDelete)
 router.post('/edit', checkUser, requireAuth, postEdit);
 router.post('/add', checkUser, requireAuth, postAdd);
 
-// auth route
+// auth route dashboard
 router.get('/login-dashboard', getLoginDashboard);
 router.get('/signup-dashboard', getSignupDashboard)
 router.post('/login-dashboard', postLoginDashboard);
 router.post('/signup-dashboard', postSignupDashboard);
 router.get('/logout-dashboard', getLogoutDashboard);
+
+// auth route game
+// post login game user
+// use sent token to access restricted endpoint as bearer token in postman
 router.post('/login-game', postLoginGame)
+// register user post
+router.post('/register-game', postAdd);
+// register user get
+router.get('/register-game', getRegisterPlayer)
 
 //game route
 // endpoint for user to see its own history
@@ -69,5 +77,6 @@ router.get('/player-history', requirePlayerAuth, playerHistory)
 router.post('/fight/:roomname', requirePlayerAuth, fight)
 // creaete room endpoint
 router.post('/create-room', requirePlayerAuth, createRoom)
+
 
 module.exports = router

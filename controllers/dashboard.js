@@ -109,7 +109,9 @@ exports.getAdd = (req, res, next) => {
 }
 
 exports.postAdd = (req, res, next) => {
-  const { username, password, firstName, lastName, age, win, lose } = req.body;
+  const { username, password, firstName, lastName, age} = req.body;
+  const win = req.body.win || 0
+  const lose = req.body.lose || 0
   const role = "player";
   console.log(role)
   // post data to api

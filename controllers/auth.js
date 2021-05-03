@@ -85,7 +85,6 @@ exports.getLogoutDashboard = (req, res) => {
 
 
 // login player 
-
 exports.postLoginGame = async (req, res, next) => {
   const { username, password } = req.body;
   const user = await User_Game.login(username, password)
@@ -94,5 +93,13 @@ exports.postLoginGame = async (req, res, next) => {
   // res.redirect('/game')
   res.status(201).json({
     message: token
+  })
+}
+
+// register player 
+exports.getRegisterPlayer = (req, res, next) => {
+  res.status(200).json({
+    title: "register your new account",
+    message: "post your username, password, firstName, lastName, age in postman with the same exact value"
   })
 }
