@@ -1,8 +1,5 @@
-const User_Game = require('../model/user_game')
+const { User_Game, User_Game_History } = require('../model/user_game')
 const Room = require('../model/room')
-const jwt = require('jsonwebtoken')
-const { collection } = require('../model/room')
-
 
 exports.getGame = async (req, res, next) => {
 
@@ -47,15 +44,20 @@ exports.fight = async (req, res, next) => {
             }
             let playerChoices = {
               playerName: this.player,
-              choice: choosen
+              choices: choosen
             }
             return playerChoices
           }
         }
       }
-      if (playersLoggedin.length == 1 ) {
+      if (playersLoggedin.length == 1) {
         res.status(200).json({
           message: 'waiting for other player'
+        })
+      }
+      if (playersLoggedin.length > 2) {
+        res.status(200).json({
+          message: 'Room is full'
         })
       }
       const startBattle = new Promise((resolve, reject) => {
@@ -73,25 +75,78 @@ exports.fight = async (req, res, next) => {
           }
         }
       })
-      const resultBattle = await startBattle
-      res.send(resultBattle)
-        
 
-      if (playersLoggedin.length > 2) {
-        res.status(200).json({
-          message: 'Room is full'
-        })
+
+      const battleInput = await startBattle
+      const processBattle = new Promise((resolve, reject) => {
+        let player1Input = battleInput[0]
+        let player2Input = battleInput[1]
+        let player1Score = 0
+        let player2Score = 0
+        for (let i = 0; i < player1Input.choices.length; i++) {
+          switch (player1Input.choices[i] + player2Input.choices[i]) {
+            case "rockrock":
+            case "scissorscissor":
+            case "paperpaper":
+              player1Score += 0
+              player2Score += 0
+              break;
+            case "rockscissor":
+            case "paperrock":
+            case "scissorrock":
+              player1Score += 1
+              break;
+            case "rockpaper":
+            case "paperscissor":
+            case "scissorrock":
+              player2Score += 1
+              break;
+            default:
+              break;
+          }
+        }
+        if (player1Score > player2Score) {
+          let winner = player1Input.playerName
+          let loser = player2Input.playerName
+          resolve({ winner: winner, loser: loser })
+        } else {
+          let winner = player2Input.playerName
+          let loser = player1Input.playerName
+          resolve({ winner: winner, loser: loser })
+        }
+      })
+      const resultBattle = await processBattle
+      let winner = resultBattle.winner
+      let loser = resultBattle.loser
+      try {
+        const winnerDb = await User_Game.findOne({ username: winner })
+        const winnerDbHistory = await User_Game_History.findOne({ _id: winnerDb.userGameHistory })
+        await User_Game_History.updateOne({ _id: winnerDbHistory._id }, { win: (winnerDbHistory.win + 1) })
+      } catch (error) {
+        console.log(error)
       }
+
+      try {
+        const loserDb = await User_Game.findOne({ username: loser })
+        const loserDbHistory = await User_Game_History.findOne({ _id: loserDb.userGameHistory })
+        await User_Game_History.updateOne({ _id: loserDbHistory._id }, { lose: (loserDbHistory.lose + 1) })
+      } catch (error) {
+        console.log(error)
+      }
+
+      res.status(200).json(resultBattle)
+
 
     } else {
       res.status(400).json({
         message: `${roomName} not Found`
       })
     }
-
   } catch (error) {
     res.status(400).json(error)
   }
+
+
 }
 
 exports.createRoom = async (req, res, next) => {

@@ -137,33 +137,35 @@ exports.newUser = async (req, res, next) => {
 exports.editUser = async (req, res, next) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const id = req.params.id
+  const User_GameActive = await User_Game.findOne({_id:id})
+  console.log(User_GameActive)
   try {
     await User_Game.findOneAndUpdate({ _id: id }, {
       username: username,
       password: password
     },
       { runValidators: true, context: 'query' }, // enable validator to make username only has unique value
-      (err) => { if (err) console.log(err.message) }, // display error message to console
-      async (req, res) => { // if there is no error forward to next update process
-        await User_Game_Biodata.updateOne( // update User_Game_Biodata value
-          { _id: res.userGameBiodata },
-          {
-            firstName: firstName,
-            lastName: lastName,
-            age: age
-          },
-          { runValidators: true }
-        )
+      (err) => { if (err) console.log(err.message) }) // display error message to console
+      // if there is no error forward to next update process
+      await User_Game_Biodata.updateOne( // update User_Game_Biodata value
+        { _id: User_GameActive.userGameBiodata },
+        {
+          firstName: firstName,
+          lastName: lastName,
+          age: age
+        },
+        { runValidators: true }
+      )
 
-        await User_Game_History.updateOne( // update User_Game_History value
-          { _id: res.userGameHistory },
-          {
-            win: win,
-            lose: lose
-          },
-          { runValidators: true }
-        )
-      })
+      await User_Game_History.updateOne( // update User_Game_History value
+        { _id: User_GameActive.userGameHistory },
+        {
+          win: win,
+          lose: lose
+        },
+        { runValidators: true }
+      )
+
       res.status(201).json({
         status: "success",
         message: "successfully Deleted"

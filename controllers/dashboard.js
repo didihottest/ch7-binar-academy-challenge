@@ -44,7 +44,6 @@ exports.getEdit = (req, res, next) => {
   let id = req.query.id;
   // get data from api
   axios.get(`http://localhost:3000/api/user?id=${id}`).then(response => {
-    console.log(response.data.status)
     if (response.data.status == "failed") {
       res.render("error", {
         headTitle: "Not Found!",

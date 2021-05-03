@@ -19,7 +19,6 @@ const requireAuth = (req, res, next)=>{
           req.flash('error', "you need to be admin to access this page")
           res.redirect('/login-dashboard')
         }
-        console.log(decodedToken)
         next();
       }
     })
