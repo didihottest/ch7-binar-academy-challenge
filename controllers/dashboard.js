@@ -93,6 +93,7 @@ exports.postEdit = (req, res, next) => {
     axios.post(`http://localhost:3000/api/useredit/${id}`, {
       username, password, firstName, lastName, age, win, lose, role
     }).then((response) => {
+      req.flash("success", "Data Successfully Edited")
       res.redirect('/dashboard')
     }).catch((error => {
       if (error) console.log(error)
@@ -109,7 +110,7 @@ exports.getAdd = (req, res, next) => {
 }
 
 exports.postAdd = (req, res, next) => {
-  const { username, password, firstName, lastName, age} = req.body;
+  const { username, password, firstName, lastName, age } = req.body;
   const win = req.body.win || 0
   const lose = req.body.lose || 0
   const role = "player";
