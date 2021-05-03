@@ -39,6 +39,7 @@ app.use(session({
 }))
 // use flash for error handling
 app.use(flash())
+// import router routes endpoint from router.js
 app.use(routers)
 
 
