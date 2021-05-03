@@ -32,12 +32,16 @@ exports.postLoginDashboard = async (req, res, next) => {
     password
   } = req.body;
   try {
+    // use login static function from user_admin schema
     const user = await User_Admin.login(email, password)
+    // create token
     const token = createToken(user._id, user.role)
+    // send cookie with token
     res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
     res.redirect('/dashboard')
   } catch (error) {
     if (error) {
+      // error handling
       req.flash('error', error.message)
       res.redirect('/login-dashboard')
     }
@@ -45,6 +49,7 @@ exports.postLoginDashboard = async (req, res, next) => {
 }
 
 exports.getSignupDashboard = (req, res, next) => {
+  // error message handling using flash module
   const message = flashDeterminer(req)
   res.render('signup-dashboard', {
     messageSuccess: message[0],
@@ -62,6 +67,7 @@ exports.postSignupDashboard = async (req, res, next) => {
     req.flash('success', `${userAdmin[email]} Successfully Created, Please Login`)
     res.redirect('/login-dashboard')
   } catch (error) {
+      // error handling
     if (error) {
       req.flash('error', error.message)
       res.redirect('/signup-dashboard')

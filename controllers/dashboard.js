@@ -14,6 +14,7 @@ exports.getHome = (req, res, next) => {
 
 // dashboard end route
 exports.getDashboard = (req, res, next) => {
+  // flash message error handling
   let messageSuccess = req.flash('success')
   if (messageSuccess.length > 0) {
     messageSuccess = messageSuccess[0]
@@ -52,6 +53,7 @@ exports.getEdit = (req, res, next) => {
         location: "/"
       });
     } else {
+      // render data to edit ejs
       res.render('edit', {
         data: response.data
       })
@@ -68,6 +70,7 @@ exports.postEdit = (req, res, next) => {
   // get data from api
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
+    // get data from api if there is an error message on validation
     axios.get(`http://localhost:3000/api/user?id=${id}`).then(response => {
       if (response.data.status == "failed") {
         res.render("error", {
@@ -77,6 +80,7 @@ exports.postEdit = (req, res, next) => {
           location: "/"
         });
       } else {
+        // render data to edit ejs
         res.render('edit', {
           data: response.data
         })
@@ -85,6 +89,7 @@ exports.postEdit = (req, res, next) => {
       console.log(error)
     })
   } else {
+    // post data to api
     axios.post(`http://localhost:3000/api/useredit/${id}`, {
       username, password, firstName, lastName, age, win, lose, role
     }).then((response) => {
@@ -107,12 +112,15 @@ exports.postAdd = (req, res, next) => {
   const { username, password, firstName, lastName, age, win, lose } = req.body;
   const role = "player";
   console.log(role)
+  // post data to api
   axios.post("http://localhost:3000/api/user", {
     username, password, firstName, lastName, age, win, lose, role
   }).then(response => {
+    // flash message success if successful
     req.flash("success", "Data Successfully Added")
     res.redirect('/dashboard')
   }).catch(error => {
+    // if error use this function to send error message
     let message = error.response.data.message;
     if (message.includes("User_Game validation failed: username: Error, expected `username` to be unique.")) {
       message = "Username Already Used, Use Another Name"
@@ -125,10 +133,13 @@ exports.postAdd = (req, res, next) => {
 
 exports.getDelete = (req, res, next) => {
   const id = req.query.id
+  // post data to delete file in database
   axios.post(`http://localhost:3000/api/userdelete/${id}`, {}).then(response => {
     req.flash('success', "Successfully Deleted")
     res.redirect('/dashboard')
   }).catch(error => {
+
+    // error handling
     console.log(error)
     req.flash('error', "Delete Operation Failed")
     res.redirect('/dashboard')

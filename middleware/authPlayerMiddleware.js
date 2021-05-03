@@ -5,28 +5,35 @@ const requirePlayerAuth = async (req, res, next) => {
 
   // const token = req.cookies.jwt
   const authHeader = req.get('Authorization');
+  // check if there is header
   if (!authHeader) {
-    const error = new Error('Not authenticated.');
-    error.statusCode = 401;
-    throw error;
+    res.send(401).json({
+      message: "Not Authorized"
+    })
+  } else {
+    const token = authHeader.split(' ')[1];
+    let decodedToken;
+    try {
+      // verify token and decrpyt it using jwt
+      decodedToken = jwt.verify(token, 'secret');
+    } catch (err) {
+      res.send(401).json({
+        message: "Not Authorized"
+      })
+    }
+    if (!decodedToken) {
+      res.send(401).json({
+        message: "Not Authorized"
+      })
+    } else {
+      let user = await User_Game.findById(decodedToken.id)
+      req.userId = user._id
+      req.username = user.username
+      next();
+    }
+
   }
-  const token = authHeader.split(' ')[1];
-  let decodedToken;
-  try {
-    decodedToken = jwt.verify(token, 'secret');
-  } catch (err) {
-    err.statusCode = 500;
-    throw err;
-  }
-  if (!decodedToken) {
-    const error = new Error('Not authenticated.');
-    error.statusCode = 401;
-    throw error;
-  }
-  let user = await User_Game.findById(decodedToken.id)
-  req.userId = user._id
-  req.username = user.username
-  next();
+
 
 
 

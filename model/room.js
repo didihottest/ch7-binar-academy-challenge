@@ -10,7 +10,12 @@ const RoomSchema = new mongoose.Schema({
   name:{
     type: String,
     required: [true, 'Room Name must be filled']
-  }
+  },
+  log: [
+    {
+      type: String
+    }
+  ]
 }, 
 {
   timestamps: true
