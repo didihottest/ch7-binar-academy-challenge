@@ -63,8 +63,11 @@ router.get('/logout-dashboard', getLogoutDashboard);
 router.post('/login-game', postLoginGame)
 
 //game route
+// endpoint for user to see its own history
 router.get('/player-history', requirePlayerAuth, playerHistory)
+// fight room for battle endpoint
 router.post('/fight/:roomname', requirePlayerAuth, fight)
+// creaete room endpoint
 router.post('/create-room', requirePlayerAuth, createRoom)
 
 module.exports = router
