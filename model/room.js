@@ -1,3 +1,4 @@
+// room DB schema
 // use mongoose odm library
 const mongoose = require('mongoose');
 // create room schema

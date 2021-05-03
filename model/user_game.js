@@ -1,3 +1,4 @@
+// user game / player db
 // use mongoose odm library
 const mongoose = require('mongoose');
 // unique validator library to identify duplicate value

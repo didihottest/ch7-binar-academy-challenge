@@ -1,3 +1,6 @@
+//// middleware for player authentication
+
+
 // import jwt module
 const jwt = require('jsonwebtoken')
 // import user game module from user_game model

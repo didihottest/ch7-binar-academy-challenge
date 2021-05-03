@@ -1,4 +1,8 @@
+//// middleware for admin authentication
+
+// use jwt token module
 const jwt = require('jsonwebtoken')
+// import module for user_admin from model
 const User_Admin = require('../model/user_admin')
 
 // check authentification from cookies
