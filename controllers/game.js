@@ -165,9 +165,12 @@ exports.fight = async (req, res, next) => {
 exports.createRoom = async (req, res, next) => {
   const name = req.body.name
   const id = req.userId
+
+  console.log(name, id)
   try {
+    const userActive = await User_Game.findOne({_id:id})
     // create room
-    const createdRoom = await Room.create({ creator: id, name: name })
+    const createdRoom = await Room.create({ name: name, creator: userActive.username  })
     // send message if room created
     res.status(201).json({
       status: "success",
@@ -175,6 +178,7 @@ exports.createRoom = async (req, res, next) => {
       roomName: createdRoom.name
     })
   } catch (error) {
+    console.log(error)
     if (error.code == 11000) {
       // error handling if there is same room name already used
       const errorMessage = "Room Name already Used, use another Name"
