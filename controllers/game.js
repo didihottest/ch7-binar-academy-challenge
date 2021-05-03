@@ -24,17 +24,21 @@ exports.fight = async (req, res, next) => {
         }
         // user input function that randomize rock paper scissor input
         userInput() {
+          // array that contain three choices of game
           let rps = ['rock', 'paper', 'scissor']
           let choosen = []
           if (this.player) {
+            // random choice logic
             for (let i = 0; i < rps.length; i++) {
               let randomChoice = Math.floor(Math.random() * 3)
               choosen.push(rps[randomChoice]);
             }
+            // assign username and choices to variable
             let playerChoices = {
               playerName: this.player,
               choices: choosen
             }
+            // return output data
             return playerChoices
           }
         }
@@ -59,7 +63,7 @@ exports.fight = async (req, res, next) => {
           let player1Choosen = player1.userInput()
           let player2Choosen = player2.userInput()
           let playersChoosen = [player1Choosen, player2Choosen]
-
+          // resolve reject logic
           if (playersChoosen.length == 2) {
             resolve(playersChoosen)
           } else {
@@ -80,7 +84,7 @@ exports.fight = async (req, res, next) => {
         let player1Score = 0
         // player 1 score
         let player2Score = 0
-        // loop match for 3 times
+        // loop match for 3 times to get three match
         for (let i = 0; i < player1Input.choices.length; i++) {
           // switch logic for determining score
           switch (player1Input.choices[i] + player2Input.choices[i]) {
@@ -178,6 +182,7 @@ exports.createRoom = async (req, res, next) => {
       const errorMessage = "Room Name already Used, use another Name"
       res.status(400).json(errorMessage)
     } else {
+    // error message handling
       res.status(400).json(error)
     }
   }
@@ -185,36 +190,36 @@ exports.createRoom = async (req, res, next) => {
 
 exports.playerHistory = async (req, res, next) => {
   const id = req.userId
-    try {
-      // populate user active database
-      User_Game.findOne({ _id: id })
-        .populate('userGameHistory userGameBiodata')
-        .exec((err, activeUser) => {
-          if (err) {
-            res.send({
-              status: "failed",
-              message: "Wrong ID"
-            })
-          };
-          console.log(activeUser)
-          // assign active user data to variable
-          let activeUserhistory = {
-            username: activeUser.username,
-            firstName: activeUser.userGameBiodata.firstName,
-            lastName: activeUser.userGameBiodata.lastName,
-            age: activeUser.userGameBiodata.age,
-            win: activeUser.userGameHistory.win,
-            lose: activeUser.userGameHistory.lose
-          }
-          // send data to client
-          res.status(200).json(activeUserhistory)
-        })
-    } catch (error) {
-      res.status(400).json({
-        status: "Failed to get data",
-        message: error.message
+  try {
+    // populate user active database
+    User_Game.findOne({ _id: id })
+      .populate('userGameHistory userGameBiodata')
+      .exec((err, activeUser) => {
+        if (err) {
+          res.send({
+            status: "failed",
+            message: "Wrong ID"
+          })
+        };
+        // assign active user data to variable
+        let activeUserhistory = {
+          username: activeUser.username,
+          firstName: activeUser.userGameBiodata.firstName,
+          lastName: activeUser.userGameBiodata.lastName,
+          age: activeUser.userGameBiodata.age,
+          win: activeUser.userGameHistory.win,
+          lose: activeUser.userGameHistory.lose
+        }
+        // send data to client
+        res.status(200).json(activeUserhistory)
       })
-    }
-  
+  } catch (error) {
+    // error message handling
+    res.status(400).json({
+      status: "Failed to get data",
+      message: error.message
+    })
+  }
+
 
 }
